@@ -1,0 +1,161 @@
+#==============================================================================#
+# File extensions to be ignored anywhere in the tree.
+#==============================================================================#
+# Temp files created by most text editors.
+*~
+# Merge files created by git.
+*.orig
+# Java bytecode
+*.class
+# Byte compiled python modules.
+*.pyc
+# vim swap files
+.*.sw?
+.sw?
+# vscode settings directory
+.vscode
+#OS X specific files.
+.DS_store
+# Core files
+#core
+
+#==============================================================================#
+# Explicit files to ignore (only matches one).
+#==============================================================================#
+# Various tag programs
+/tags
+/TAGS
+/GPATH
+/GRTAGS
+/GSYMS
+/GTAGS
+.gitusers
+autom4te.cache
+cscope.files
+cscope.out
+autoconf/aclocal.m4
+autoconf/autom4te.cache
+/compile_commands.json
+
+#==============================================================================#
+# Build artifacts
+#==============================================================================#
+#m4/
+#*.m4
+*.o
+*.lo
+*.la
+*~
+*.pdf
+*.swp
+a.out
+
+#==============================================================================#
+# Backup artifacts
+#==============================================================================#
+~*
+*~
+tmp/
+
+#==============================================================================#
+# Intellij files
+#==============================================================================#
+.idea
+*.iml
+
+#==============================================================================#
+# Code Coverage files
+#==============================================================================#
+*.gcno
+*.gcda
+
+#==============================================================================#
+# Eclipse
+#==============================================================================#
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+
+# Eclipse Core
+.project
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# CDT-specific (C/C++ Development Tooling)
+.cproject
+
+## General
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.cuo
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# Editor temporaries
+*.swp
+*~
+
+# Visual Studio
+.vs
+
+# OSX dir files
+.DS_Store
+
+# User's build configuration
+Makefile.config
+
+# build, distribute, and bins (+ python proto bindings)
+.build_debug/*
+.build_release/*
+distribute/*
+*.testbin
+*.bin
+cmake_build
+.cmake_build
+cmake-build-*
+
+# Generated documentation
+apidoc/doc
+docs/_site
+docs/gathered
+_site
+doxygen
+docs/dev
+
+# Config files
+*.conf
+
+# Vagrant
+.vagrant
+
+# Clangd cache index
+.cache
+
+# Based off .gitignore from github.com/cmu-db/bustub
+
+#==============================================================================#
+# vcpkg 
+#==============================================================================#
+vcpkg_installed
