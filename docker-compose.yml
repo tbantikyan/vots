@@ -1,0 +1,13 @@
+services:
+  dev:
+    build: .
+    volumes:
+      - ./:/workspace:cached
+      - ~/.config/nvim:/root/.config/nvim
+      - ~/.gitconfig:/root/.gitconfig:ro
+      - ~/.ssh/id_ed25519:/root/.ssh/id_ed25519:ro
+      - ~/.ssh/id_ed25519.pub:/root/.ssh/id_ed25519.pub:ro
+    tty: true
+    stdin_open: true
+    command: ["/bin/bash"]
+
