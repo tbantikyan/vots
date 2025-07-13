@@ -2,7 +2,7 @@
 
 /*
  * program.hpp
- * Utility functions that can operate of and on the flow of the program
+ * Utility functions that can operate of and on the flow of the program.
  */
 
 #include <cstdlib>
