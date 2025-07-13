@@ -10,8 +10,10 @@ RUN apt-get update && \
       curl \
       git \
       gnupg \
+      llvm \
       lsb-release \
       openssh-client \
+      ripgrep \
       software-properties-common \
       wget && \
     apt-get install -y --no-install-recommends cmake && \
