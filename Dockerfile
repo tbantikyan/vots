@@ -9,7 +9,11 @@ RUN apt-get update && \
       ca-certificates \            
       curl \
       git \
-      openssh-client && \
+      gnupg \
+      lsb-release \
+      openssh-client \
+      software-properties-common \
+      wget && \
     apt-get install -y --no-install-recommends cmake && \
     rm -rf /var/lib/apt/lists/*
 
@@ -17,6 +21,15 @@ RUN curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linu
     chmod u+x nvim-linux-arm64.appimage && \
     ./nvim-linux-arm64.appimage --appimage-extract && \
     ln -s /squashfs-root/AppRun /usr/bin/nvim
+
+RUN wget https://apt.llvm.org/llvm.sh && \
+    chmod +x llvm.sh && \
+    sudo ./llvm.sh 20 && \
+    apt-get install -y clangd-20 && \
+    update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-20 100 && \
+    mkdir -p ~/.local/share/nvim/mason/packages/clangd/bin && \
+    ln -s "$(which clangd-20)" ~/.local/share/nvim/mason/packages/clangd/bin/clangd && \
+    rm llvm.sh
 
 WORKDIR /workspace
 
