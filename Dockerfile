@@ -24,7 +24,7 @@ RUN curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linu
 
 RUN wget https://apt.llvm.org/llvm.sh && \
     chmod +x llvm.sh && \
-    sudo ./llvm.sh 20 && \
+    ./llvm.sh 20 && \
     apt-get install -y clangd-20 && \
     update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-20 100 && \
     mkdir -p ~/.local/share/nvim/mason/packages/clangd/bin && \
