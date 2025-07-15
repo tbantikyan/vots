@@ -66,7 +66,7 @@ class MemoryPool final {
         while (!store_[next_free_index_].is_free_) {
             ++next_free_index_;
 
-            // hardware branch predictor should typically never predict this --> minimal cost of if
+            // hardware branch predictor should typically never predict this --> minimal cost of if.
             if (next_free_index_ == store_.size()) [[unlikely]] {
                 next_free_index_ = 0;
             }
