@@ -7,6 +7,11 @@
 
 namespace common {
 
+/*
+ * memory_pool.hpp
+ * Implements a simple memory pool that tracks allocation on-heap.
+ */
+
 template <typename T>
 class MemoryPool final {
    public:
