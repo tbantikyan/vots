@@ -1,4 +1,6 @@
 {
+  "name": "vots",
+  "version": "0",
   "dependencies": [
     "gtest"
   ]
