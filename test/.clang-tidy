@@ -1,0 +1,10 @@
+---
+Checks:     '
+            -modernize-use-trailing-return-type,
+            '
+InheritParentConfig: true
+
+#### Disabled checks and why: #####
+#
+# -modernize-use-trailing-return-type,
+# Disabled to avoid errors regarding GTest TEST* functions
