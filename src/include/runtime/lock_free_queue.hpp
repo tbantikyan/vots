@@ -1,3 +1,9 @@
+/*
+ * lock_free_queue.hpp
+ * Provides implementation of a generic, fixed-sized, lock-free queue. Provides safe concurrent data sharing for the
+ * Single Producer Single Consumer paradigm.
+ */
+
 #pragma once
 
 #include <pthread.h>
@@ -12,15 +18,12 @@
 namespace common {
 
 /*
- * lock_free_queue.hpp
- * Provides implementation of a generic, fixed-sized, lock-free queue. Provides safe concurrent data sharing for the
- * Single Producer Single Consumer paradigm.
+ * Single Producer Single Consumer, fixed-sized, lock-free queue.
  *
  * The queue implements two-phase write and read operations. This enables partial writes, minimizing atomic operations
  * and optimizing memory usage. Moreover, it simplifies shared data management, as consumption and production is only
  * visible after "commits" done via the Update* methods.
  */
-
 template <typename T>
 class LockFreeQueue final {
    public:

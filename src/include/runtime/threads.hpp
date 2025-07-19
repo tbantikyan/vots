@@ -1,3 +1,8 @@
+/*
+ * threads.hpp
+ * Utility functions for creating threads bound to a specific CPU core.
+ */
+
 #pragma once
 
 #include <sys/syscall.h>
@@ -10,12 +15,11 @@
 namespace common {
 
 /*
- * threads.hpp
- * Utility functions for creating threads bound to a specific CPU core.
+ * SetThreadCore attempts to set thread affinity (i.e. the core on which the thread will execute). Expects to be called
+ * from within the thread whose affinity is being set.
+ *
+ * Set to -1 to avoid assigning affinity.
  */
-
-// SetThreadCore attempts to set thread affinity (i.e. the core on which the thread will execute). Expects to be called
-// from within the thread whose affinity is being set.
 inline auto SetThreadCore(int core_id) noexcept {
     cpu_set_t cpuset;
     CPU_ZERO(&cpuset);  // zero out all flags
@@ -23,8 +27,10 @@ inline auto SetThreadCore(int core_id) noexcept {
     return (pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset) == 0);
 }
 
-// CreateAndStartThread creates a thread running the provided function and with the core affinity {core_id}. Blocks
-// until the thread either starts successfully or fails. Upon failure, nullptr is returned.
+/*
+ * CreateAndStartThread creates a thread running the provided function and with the core affinity {core_id}. Blocks
+ * until the thread either starts successfully or fails. Upon failure, nullptr is returned.
+ */
 template <typename FuncType, typename... ArgsType>
 inline auto CreateAndStartThread(int core_id, const std::string &name, FuncType &&func, ArgsType &&...args) noexcept
     -> std::thread * {

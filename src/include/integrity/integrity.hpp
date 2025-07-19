@@ -1,9 +1,9 @@
-#pragma once
-
 /*
  * integrity.hpp
  * Utility functions that can operate of and on the flow of the program.
  */
+
+#pragma once
 
 #include <cstdlib>
 #include <iostream>
