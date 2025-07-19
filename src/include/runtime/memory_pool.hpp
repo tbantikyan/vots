@@ -1,3 +1,8 @@
+/*
+ * memory_pool.hpp
+ * Implements a simple memory pool that tracks allocation on-heap.
+ */
+
 #pragma once
 
 #include <string>
@@ -6,11 +11,6 @@
 #include "integrity/integrity.hpp"
 
 namespace common {
-
-/*
- * memory_pool.hpp
- * Implements a simple memory pool that tracks allocation on-heap.
- */
 
 template <typename T>
 class MemoryPool final {
