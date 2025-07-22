@@ -2,6 +2,7 @@ add_library(
         vots_network
         OBJECT
         tcp_socket.cpp
+        tcp_server.cpp
     )
 
 target_link_libraries(
