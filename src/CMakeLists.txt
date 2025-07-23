@@ -1,9 +1,9 @@
-add_subdirectory(temp)
+add_subdirectory(network)
 
 add_library(vots STATIC ${ALL_OBJECT_FILES})
 
 set(VOTS_LIBS
-        vots_temp
+        vots_network
         )
 
 set(VOTS_THIRDPARTY_LIBS
