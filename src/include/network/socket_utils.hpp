@@ -21,7 +21,7 @@
 #include <sstream>
 #include <string>
 
-#include "integrity/integrity.hpp"
+#include "common/integrity.hpp"
 #include "logging/logger.hpp"
 
 namespace common {

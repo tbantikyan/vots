@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-#include "integrity/integrity.hpp"
+#include "common/integrity.hpp"
 
 namespace common {
 
