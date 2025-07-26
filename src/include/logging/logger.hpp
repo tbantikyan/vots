@@ -8,7 +8,7 @@
 #include <fstream>
 #include <string>
 
-#include "integrity/integrity.hpp"
+#include "common/integrity.hpp"
 #include "log_type.hpp"
 #include "logging/time_utils.hpp"
 #include "runtime/lock_free_queue.hpp"
