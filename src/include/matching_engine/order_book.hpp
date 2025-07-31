@@ -16,10 +16,10 @@ class OrderBook final {
 
     ~OrderBook();
 
-    auto Add(common::ClientId client_id, common::OrderId client_order_id, common::TickerId ticker_id, common::Side side,
-             common::Price price, common::Qty qty) noexcept -> void;
+    void Add(common::ClientId client_id, common::OrderId client_order_id, common::TickerId ticker_id, common::Side side,
+             common::Price price, common::Qty qty) noexcept;
 
-    auto Cancel(common::ClientId client_id, common::OrderId order_id, common::TickerId ticker_id) noexcept -> void;
+    void Cancel(common::ClientId client_id, common::OrderId order_id, common::TickerId ticker_id) noexcept;
 
     auto ToString(bool detailed, bool validity_check) const -> std::string;
 
@@ -45,6 +45,7 @@ class OrderBook final {
     OrdersAtPrice *bids_by_price_ = nullptr;
     OrdersAtPrice *asks_by_price_ = nullptr;
 
+    // No need map for each side because there can't be both ask and bid orders at the same price (they'll be matched).
     OrdersAtPriceMap price_orders_at_price_;
 
     common::MemoryPool<Order> order_pool_;
