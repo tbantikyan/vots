@@ -1,6 +1,7 @@
 add_library(
         vots_matching_engine
         OBJECT
+        matching_engine.cpp
         order_book.cpp
     )
 
