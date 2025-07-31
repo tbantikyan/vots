@@ -54,4 +54,4 @@ struct MEClientRequest {
 
 using ClientRequestLFQueue = common::LockFreeQueue<MEClientRequest>;
 
-}  // namespace wxchange
+}  // namespace exchange
