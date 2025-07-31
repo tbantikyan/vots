@@ -37,7 +37,29 @@ struct Order {
           prev_order_(prev_order),
           next_order_(next_order) {}
 
-    auto ToString() const -> std::string;
+    auto ToString() const -> std::string {
+        std::stringstream ss;
+        ss << "MEOrder"
+           << "["
+           << "ticker:" << common::TickerIdToString(ticker_id_) << " "
+           << "cid:" << common::ClientIdToString(client_id_) << " "
+           << "oid:" << common::OrderIdToString(client_order_id_) << " "
+           << "moid:" << common::OrderIdToString(market_order_id_) << " "
+           << "side:" << common::SideToString(side_) << " "
+           << "price:" << common::PriceToString(price_) << " "
+           << "qty:" << common::QtyToString(qty_) << " "
+           << "prio:" << common::PriorityToString(priority_) << " "
+           << "prev:"
+           << common::OrderIdToString((prev_order_ != nullptr) ? prev_order_->market_order_id_
+                                                               : common::ORDER_ID_INVALID)
+           << " "
+           << "next:"
+           << common::OrderIdToString((next_order_ != nullptr) ? next_order_->market_order_id_
+                                                               : common::ORDER_ID_INVALID)
+           << "]";
+
+        return ss.str();
+    }
 };
 
 using OrderMap = std::array<Order *, common::ME_MAX_ORDER_IDS>;
