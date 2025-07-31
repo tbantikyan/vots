@@ -11,7 +11,7 @@
 #include "common/types.hpp"
 #include "runtime/lock_free_queue.hpp"
 
-namespace wxchange {
+namespace exchange {
 
 #pragma pack(push, 1)
 enum class ClientRequestType : uint8_t { INVALID = 0, NEW = 1, CANCEL = 2 };
