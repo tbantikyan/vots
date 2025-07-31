@@ -1,6 +1,7 @@
 add_library(
         vots_network
         OBJECT
+        mcast_socket.cpp
         tcp_socket.cpp
         tcp_server.cpp
     )
