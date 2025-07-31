@@ -138,3 +138,12 @@ add_custom_target(format-fix ${CMAKE_SOURCE_DIR}/run_clang_format.py
         --fix
         --quiet
 )
+
+# main executables
+add_executable(exchange_main src/exchange_main.cpp)
+
+target_link_libraries(exchange_main PRIVATE vots)
+
+target_include_directories(exchange_main PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
