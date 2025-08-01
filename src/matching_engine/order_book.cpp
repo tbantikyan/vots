@@ -64,6 +64,7 @@ auto OrderBook::Match(common::TickerId ticker_id, common::ClientId client_id, co
     matching_engine_->SendMarketUpdate(&market_update_);
 
     if (order->qty_ == 0) {
+        // Upon complete execution, send a CANCEL message as well.
         market_update_ = {.type_ = MarketUpdateType::CANCEL,
                           .order_id_ = order->market_order_id_,
                           .ticker_id_ = ticker_id,
@@ -75,6 +76,7 @@ auto OrderBook::Match(common::TickerId ticker_id, common::ClientId client_id, co
 
         RemoveOrder(order);
     } else {
+        // Upon partial execution, send a MODIFY message as well.
         market_update_ = {.type_ = MarketUpdateType::MODIFY,
                           .order_id_ = order->market_order_id_,
                           .ticker_id_ = ticker_id,

@@ -1,3 +1,9 @@
+/*
+ * fifo_sequencer.hpp
+ * Component in order gateway that is responsible for arranging client requests in FIFO order to provide fairness.
+ * Accommodates a maximum of ME_MAX_PENDING_REQUESTS at a time.
+ */
+
 #pragma once
 
 #include "client_request.hpp"
@@ -11,7 +17,7 @@ constexpr size_t ME_MAX_PENDING_REQUESTS = 1024;
 
 class FIFOSequencer {
    private:
-    // needs to be defined before sort call down below on pending_client_requests_
+    // Needs to be defined before sort call down below on pending_client_requests_.
     struct RecvTimeClientRequest {
         common::Nanos recv_time_ = 0;
         MEClientRequest request_;
@@ -41,6 +47,8 @@ class FIFOSequencer {
         logger_->Log("%:% %() % Processing % requests.\n", __FILE__, __LINE__, __FUNCTION__,
                      common::GetCurrentTimeStr(&time_str_), pending_size_);
 
+        // Though sorting is expensive, this method will run frequently and the size of pending_client_requests will
+        // typically be small.
         std::sort(pending_client_requests_.begin(), pending_client_requests_.begin() + pending_size_);
 
         for (size_t i = 0; i < pending_size_; ++i) {
