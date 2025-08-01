@@ -57,6 +57,20 @@ struct MEClientResponse {
     }
 };
 
+// OMClientResponse is the client response type in the public order data protocol.
+struct OMClientResponse {
+    size_t seq_num_ = 0;
+    MEClientResponse me_client_response_;
+
+    auto ToString() const {
+        std::stringstream ss;
+        ss << "OMClientResponse"
+           << " ["
+           << "seq:" << seq_num_ << " " << me_client_response_.ToString() << "]";
+        return ss.str();
+    }
+};
+
 #pragma pack(pop)
 
 using ClientResponseLFQueue = common::LockFreeQueue<MEClientResponse>;
