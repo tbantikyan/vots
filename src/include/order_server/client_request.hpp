@@ -50,6 +50,20 @@ struct MEClientRequest {
     }
 };
 
+// OMClientRequest is the client request type in the public order data protocol.
+struct OMClientRequest {
+    size_t seq_num_ = 0;
+    MEClientRequest me_client_request_;
+
+    auto ToString() const {
+        std::stringstream ss;
+        ss << "OMClientRequest"
+           << " ["
+           << "seq:" << seq_num_ << " " << me_client_request_.ToString() << "]";
+        return ss.str();
+    }
+};
+
 #pragma pack(pop)
 
 using ClientRequestLFQueue = common::LockFreeQueue<MEClientRequest>;
