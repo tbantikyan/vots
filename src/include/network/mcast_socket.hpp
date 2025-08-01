@@ -1,3 +1,8 @@
+/*
+ * mcast_socket.hpp
+ * Defines a multicast socket for publishing multicast messages.
+ */
+
 #pragma once
 
 #include <functional>

@@ -2,6 +2,7 @@
  * logger.hpp
  * Provides a flexible logging type that moves I/O operations to a single background thread.
  */
+
 #pragma once
 
 #include <cstdio>

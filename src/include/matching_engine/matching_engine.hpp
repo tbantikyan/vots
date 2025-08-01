@@ -1,3 +1,8 @@
+/*
+ * matching_engine.hpp
+ * Defines the matching engine that is responsible for tracking and managing user orders. Runs in its own thread.
+ */
+
 #pragma once
 
 #include "common/integrity.hpp"
@@ -34,8 +39,7 @@ class MatchingEngine final {
             } break;
 
             default: {
-                FATAL("Received invalid client-request-type:" +
-                      ClientRequestTypeToString(client_request->type_));
+                FATAL("Received invalid client-request-type:" + ClientRequestTypeToString(client_request->type_));
             } break;
         }
     }
