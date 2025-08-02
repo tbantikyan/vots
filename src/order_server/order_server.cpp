@@ -28,7 +28,7 @@ void OrderServer::Start() {
     run_ = true;
     tcp_server_.Listen(IFACE, PORT);
 
-    ASSERT(common::CreateAndStartThread(-1, "Exchange/OrderServer", [this]() { Run(); }) != nullptr,
+    ASSERT(common::CreateAndStartThread(-1, "exchange/OrderServer", [this]() { Run(); }) != nullptr,
            "Failed to start OrderServer thread.");
 }
 
