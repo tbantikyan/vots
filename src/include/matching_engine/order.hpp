@@ -1,3 +1,10 @@
+/*
+ * order.hpp
+ * Defines the types used in an order book. Specifically, an Order represents an order submitted by a market
+ * participant, while an OrdersAtPrice stores all orders of a side at a given price. Both objects are doubly linked-list
+ * nodes.
+ */
+
 #pragma once
 
 #include <array>
@@ -62,7 +69,9 @@ struct Order {
     }
 };
 
+// Mapping from OrderId to an Order.
 using OrderMap = std::array<Order *, common::ME_MAX_ORDER_IDS>;
+// Mapping from ClientId to all the participants Orders mapped by OrderId.
 using ClientOrderMap = std::array<OrderMap, common::ME_MAX_NUM_CLIENTS>;
 
 struct OrdersAtPrice {
@@ -95,6 +104,7 @@ struct OrdersAtPrice {
     }
 };
 
+// Mapping from Price to OrdersAtPrice.
 using OrdersAtPriceMap = std::array<OrdersAtPrice *, common::ME_MAX_PRICE_LEVELS>;
 
 }  // namespace exchange

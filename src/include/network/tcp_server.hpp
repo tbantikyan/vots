@@ -1,3 +1,9 @@
+/*
+ * tcp_server.hpp
+ * Defines a TCP server that can listen for incoming connections, accept incoming messages, send out outgoing messages,
+ * and prune dead connections.
+ */
+
 #pragma once
 
 #include "tcp_socket.hpp"
