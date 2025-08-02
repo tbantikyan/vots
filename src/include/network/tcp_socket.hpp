@@ -29,7 +29,7 @@ struct TCPSocket {
     auto SendAndRecv() noexcept -> bool;
 
     // Write outgoing data to the send buffers.
-    auto Send(const void *data, size_t len) noexcept -> void;
+    void Send(const void *data, size_t len) noexcept;
 
     // Deleted default, copy & move constructors and assignment-operators.
     TCPSocket() = delete;

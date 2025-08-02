@@ -1,3 +1,8 @@
+/*
+ * mcast_socket.hpp
+ * Defines a multicast socket for publishing multicast messages.
+ */
+
 #pragma once
 
 #include <functional>
@@ -24,13 +29,13 @@ struct McastSocket {
     auto Join(const std::string &ip) -> bool;
 
     // Remove / Leave membership / subscription to a multicast stream.
-    auto Leave(const std::string &ip, int port) -> void;
+    void Leave(const std::string &ip, int port);
 
     // Publish outgoing data and read incoming data.
     auto SendAndRecv() noexcept -> bool;
 
     // Copy data to send buffers - does not send them out yet.
-    auto Send(const void *data, size_t len) noexcept -> void;
+    void Send(const void *data, size_t len) noexcept;
 
     int socket_fd_ = -1;
 

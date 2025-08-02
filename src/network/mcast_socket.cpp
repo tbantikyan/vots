@@ -19,7 +19,7 @@ auto McastSocket::Init(const std::string &ip, const std::string &iface, int port
 auto McastSocket::Join(const std::string &ip) -> bool { return common::Join(socket_fd_, ip); }
 
 // Remove / Leave membership / subscription to a multicast stream.
-auto McastSocket::Leave(const std::string & /*unused*/, int /*unused*/) -> void {
+void McastSocket::Leave(const std::string & /*unused*/, int /*unused*/) {
     close(socket_fd_);
     socket_fd_ = -1;
 }
@@ -49,7 +49,7 @@ auto McastSocket::SendAndRecv() noexcept -> bool {
 }
 
 // Copy data to send buffers - does not send them out yet.
-auto McastSocket::Send(const void *data, size_t len) noexcept -> void {
+void McastSocket::Send(const void *data, size_t len) noexcept {
     memcpy(outbound_data_.data() + next_send_valid_index_, data, len);
     next_send_valid_index_ += len;
     ASSERT(next_send_valid_index_ < MCAST_BUFFER_SIZE, "Mcast socket buffer filled up and sendAndRecv() not called.");

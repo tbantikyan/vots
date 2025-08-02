@@ -1,3 +1,9 @@
+/*
+ * tcp_server.hpp
+ * Defines a TCP server that can listen for incoming connections, accept incoming messages, send out outgoing messages,
+ * and prune dead connections.
+ */
+
 #pragma once
 
 #include "tcp_socket.hpp"
@@ -8,13 +14,13 @@ struct TCPServer {
     explicit TCPServer(Logger &logger) : listener_socket_(logger), logger_(logger) {}
 
     // Start listening for connections on the provided interface and port.
-    auto Listen(const std::string &iface, int port) -> void;
+    void Listen(const std::string &iface, int port);
 
     // Check for new connections or dead connections and update containers that track the sockets.
-    auto Poll() noexcept -> void;
+    void Poll() noexcept;
 
     // Publish outgoing data from the send buffer and read incoming data from the receive buffer.
-    auto SendAndRecv() noexcept -> void;
+    void SendAndRecv() noexcept;
 
    private:
     // Add and remove socket file descriptors to and from the EPOLL list.

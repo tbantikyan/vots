@@ -1,3 +1,13 @@
+/*
+ * order_book.hpp
+ * Defines the matching engines order book, the data structure responsible for either storing aggressive orders as
+ * passive orders or matching them against existing passive orders in the order book.
+ *
+ * There is an OrderBook per trading instruments, each with a bid side and an ask side. Each side is a doubly
+ * linked-list of OrdersAtPrice, with the bid side sorted in descending order and the ask side sorted in ascending
+ * order. The Order themselves are arranged in FIFO order.
+ */
+
 #pragma once
 
 #include "common/types.hpp"
