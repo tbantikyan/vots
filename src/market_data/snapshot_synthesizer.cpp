@@ -19,7 +19,7 @@ SnapshotSynthesizer::~SnapshotSynthesizer() { Stop(); }
 
 void SnapshotSynthesizer::Start() {
     run_ = true;
-    ASSERT(common::CreateAndStartThread(-1, "Exchange/SnapshotSynthesizer", [this]() { Run(); }) != nullptr,
+    ASSERT(common::CreateAndStartThread(-1, "exchange/SnapshotSynthesizer", [this]() { Run(); }) != nullptr,
            "Failed to start SnapshotSynthesizer thread.");
 }
 

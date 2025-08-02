@@ -34,7 +34,7 @@ class MarketDataPublisher {
     void Start() {
         run_ = true;
 
-        ASSERT(common::CreateAndStartThread(-1, "Exchange/MarketDataPublisher", [this]() { Run(); }) != nullptr,
+        ASSERT(common::CreateAndStartThread(-1, "exchange/MarketDataPublisher", [this]() { Run(); }) != nullptr,
                "Failed to start MarketData thread.");
 
         snapshot_synthesizer_->Start();
