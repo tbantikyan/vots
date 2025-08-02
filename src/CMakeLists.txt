@@ -1,3 +1,4 @@
+add_subdirectory(market_data)
 add_subdirectory(matching_engine)
 add_subdirectory(network)
 add_subdirectory(order_server)
