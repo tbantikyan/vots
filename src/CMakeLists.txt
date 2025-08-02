@@ -11,7 +11,7 @@ set(VOTS_LIBS
         vots_matching_engine
         vots_network
         vots_order_server
-        vots_trading_server
+        vots_trading_engine
         )
 
 set(VOTS_THIRDPARTY_LIBS
