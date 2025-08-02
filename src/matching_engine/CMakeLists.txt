@@ -1,8 +1,8 @@
 add_library(
         vots_matching_engine
         OBJECT
+        exchange_order_book.cpp
         matching_engine.cpp
-        order_book.cpp
     )
 
 target_link_libraries(

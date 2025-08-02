@@ -1,19 +1,20 @@
-#include "matching_engine/order_book.hpp"
+#include "matching_engine/exchange_order_book.hpp"
 
 #include "matching_engine/matching_engine.hpp"
 
 namespace exchange {
 
-OrderBook::OrderBook(common::TickerId ticker_id, common::Logger *logger, MatchingEngine *matching_engine)
+ExchangeOrderBook::ExchangeOrderBook(common::TickerId ticker_id, common::Logger *logger,
+                                     MatchingEngine *matching_engine)
     : ticker_id_(ticker_id),
       matching_engine_(matching_engine),
       orders_at_price_pool_(common::ME_MAX_PRICE_LEVELS),
       order_pool_(common::ME_MAX_ORDER_IDS),
       logger_(logger) {}
 
-OrderBook::~OrderBook() {
-    logger_->Log("%:% %() % OrderBook\n%\n", __FILE__, __LINE__, __FUNCTION__, common::GetCurrentTimeStr(&time_str_),
-                 ToString(false, true));
+ExchangeOrderBook::~ExchangeOrderBook() {
+    logger_->Log("%:% %() % ExchangeOrderBook\n%\n", __FILE__, __LINE__, __FUNCTION__,
+                 common::GetCurrentTimeStr(&time_str_), ToString(false, true));
 
     matching_engine_ = nullptr;
     bids_by_price_ = asks_by_price_ = nullptr;
@@ -22,9 +23,9 @@ OrderBook::~OrderBook() {
     }
 }
 
-auto OrderBook::Match(common::TickerId ticker_id, common::ClientId client_id, common::Side side,
-                      common::OrderId client_order_id, common::OrderId new_market_order_id, Order *itr,
-                      common::Qty *leaves_qty) noexcept {
+auto ExchangeOrderBook::Match(common::TickerId ticker_id, common::ClientId client_id, common::Side side,
+                              common::OrderId client_order_id, common::OrderId new_market_order_id, ExchangeOrder *itr,
+                              common::Qty *leaves_qty) noexcept {
     const auto order = itr;
     const auto order_qty = order->qty_;
     const auto fill_qty = std::min(*leaves_qty, order_qty);
@@ -88,9 +89,9 @@ auto OrderBook::Match(common::TickerId ticker_id, common::ClientId client_id, co
     }
 }
 
-auto OrderBook::CheckForMatch(common::ClientId client_id, common::OrderId client_order_id, common::TickerId ticker_id,
-                              common::Side side, common::Price price, common::Qty qty,
-                              common::Qty new_market_order_id) noexcept {
+auto ExchangeOrderBook::CheckForMatch(common::ClientId client_id, common::OrderId client_order_id,
+                                      common::TickerId ticker_id, common::Side side, common::Price price,
+                                      common::Qty qty, common::Qty new_market_order_id) noexcept {
     auto leaves_qty = qty;
 
     if (side == common::Side::BUY) {
@@ -117,8 +118,8 @@ auto OrderBook::CheckForMatch(common::ClientId client_id, common::OrderId client
     return leaves_qty;
 }
 
-void OrderBook::Add(common::ClientId client_id, common::OrderId client_order_id, common::TickerId ticker_id,
-                    common::Side side, common::Price price, common::Qty qty) noexcept {
+void ExchangeOrderBook::Add(common::ClientId client_id, common::OrderId client_order_id, common::TickerId ticker_id,
+                            common::Side side, common::Price price, common::Qty qty) noexcept {
     const auto new_market_order_id = GenerateNewMarketOrderId();
     client_response_ = {.type_ = ClientResponseType::ACCEPTED,
                         .client_id_ = client_id,
@@ -151,9 +152,10 @@ void OrderBook::Add(common::ClientId client_id, common::OrderId client_order_id,
     }
 }
 
-void OrderBook::Cancel(common::ClientId client_id, common::OrderId order_id, common::TickerId ticker_id) noexcept {
+void ExchangeOrderBook::Cancel(common::ClientId client_id, common::OrderId order_id,
+                               common::TickerId ticker_id) noexcept {
     auto is_cancelable = (client_id < cid_oid_to_order_.size());
-    Order *exchange_order = nullptr;
+    ExchangeOrder *exchange_order = nullptr;
     if (is_cancelable) [[likely]] {
         auto &co_itr = cid_oid_to_order_.at(client_id);
         exchange_order = co_itr.at(order_id);
@@ -196,7 +198,7 @@ void OrderBook::Cancel(common::ClientId client_id, common::OrderId order_id, com
     matching_engine_->SendClientResponse(&client_response_);
 }
 
-auto OrderBook::ToString(bool detailed, bool validity_check) const -> std::string {
+auto ExchangeOrderBook::ToString(bool detailed, bool validity_check) const -> std::string {
     std::stringstream ss;
 
     auto printer = [&](std::stringstream &ss, OrdersAtPrice *itr, common::Side side, common::Price &last_price,

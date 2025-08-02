@@ -1,8 +1,8 @@
 /*
- * order.hpp
- * Defines the types used in an order book. Specifically, an Order represents an order submitted by a market
- * participant, while an OrdersAtPrice stores all orders of a side at a given price. Both objects are doubly linked-list
- * nodes.
+ * exchange_order.hpp
+ * Defines the types used in a matching engine order book. Specifically, an Order represents an order submitted by a
+ * market participant, while an OrdersAtPrice stores all orders of a side at a given price. Both objects are doubly
+ * linked-list nodes.
  */
 
 #pragma once
@@ -14,7 +14,7 @@
 
 namespace exchange {
 
-struct Order {
+struct ExchangeOrder {
     common::TickerId ticker_id_ = common::TICKER_ID_INVALID;
     common::ClientId client_id_ = common::CLIENT_ID_INVALID;
     common::OrderId client_order_id_ = common::ORDER_ID_INVALID;
@@ -24,15 +24,15 @@ struct Order {
     common::Qty qty_ = common::QTY_INVALID;
     common::Priority priority_ = common::PRIORITY_INVALID;
 
-    Order *prev_order_ = nullptr;
-    Order *next_order_ = nullptr;
+    ExchangeOrder *prev_order_ = nullptr;
+    ExchangeOrder *next_order_ = nullptr;
 
     // only needed for use with MemPool.
-    Order() = default;
+    ExchangeOrder() = default;
 
-    Order(common::TickerId ticker_id, common::ClientId client_id, common::OrderId client_order_id,
-          common::OrderId market_order_id, common::Side side, common::Price price, common::Qty qty,
-          common::Priority priority, Order *prev_order, Order *next_order) noexcept
+    ExchangeOrder(common::TickerId ticker_id, common::ClientId client_id, common::OrderId client_order_id,
+                  common::OrderId market_order_id, common::Side side, common::Price price, common::Qty qty,
+                  common::Priority priority, ExchangeOrder *prev_order, ExchangeOrder *next_order) noexcept
         : ticker_id_(ticker_id),
           client_id_(client_id),
           client_order_id_(client_order_id),
@@ -70,7 +70,7 @@ struct Order {
 };
 
 // Mapping from OrderId to an Order.
-using OrderMap = std::array<Order *, common::ME_MAX_ORDER_IDS>;
+using OrderMap = std::array<ExchangeOrder *, common::ME_MAX_ORDER_IDS>;
 // Mapping from ClientId to all the participants Orders mapped by OrderId.
 using ClientOrderMap = std::array<OrderMap, common::ME_MAX_NUM_CLIENTS>;
 
@@ -78,14 +78,14 @@ struct OrdersAtPrice {
     common::Side side_ = common::Side::INVALID;
     common::Price price_ = common::PRICE_INVALID;
 
-    Order *first_order_ = nullptr;
+    ExchangeOrder *first_order_ = nullptr;
 
     OrdersAtPrice *prev_entry_ = nullptr;
     OrdersAtPrice *next_entry_ = nullptr;
 
     OrdersAtPrice() = default;
 
-    OrdersAtPrice(common::Side side, common::Price price, Order *first_me_order, OrdersAtPrice *prev_entry,
+    OrdersAtPrice(common::Side side, common::Price price, ExchangeOrder *first_me_order, OrdersAtPrice *prev_entry,
                   OrdersAtPrice *next_entry)
         : side_(side), price_(price), first_order_(first_me_order), prev_entry_(prev_entry), next_entry_(next_entry) {}
 

@@ -1,5 +1,5 @@
 /*
- * order_book.hpp
+ * exchange_order_book.hpp
  * Defines the matching engines order book, the data structure responsible for either storing aggressive orders as
  * passive orders or matching them against existing passive orders in the order book.
  *
@@ -11,20 +11,21 @@
 #pragma once
 
 #include "common/types.hpp"
+#include "exchange_order.hpp"
 #include "logging/logger.hpp"
 #include "market_data/market_update.hpp"
-#include "order.hpp"
 #include "order_server/client_response.hpp"
 #include "runtime/memory_pool.hpp"
 
 namespace exchange {
+
 class MatchingEngine;
 
-class OrderBook final {
+class ExchangeOrderBook final {
    public:
-    explicit OrderBook(common::TickerId ticker_id, common::Logger *logger, MatchingEngine *matching_engine);
+    explicit ExchangeOrderBook(common::TickerId ticker_id, common::Logger *logger, MatchingEngine *matching_engine);
 
-    ~OrderBook();
+    ~ExchangeOrderBook();
 
     void Add(common::ClientId client_id, common::OrderId client_order_id, common::TickerId ticker_id, common::Side side,
              common::Price price, common::Qty qty) noexcept;
@@ -34,15 +35,15 @@ class OrderBook final {
     auto ToString(bool detailed, bool validity_check) const -> std::string;
 
     // Deleted default, copy & move constructors and assignment-operators.
-    OrderBook() = delete;
+    ExchangeOrderBook() = delete;
 
-    OrderBook(const OrderBook &) = delete;
+    ExchangeOrderBook(const ExchangeOrderBook &) = delete;
 
-    OrderBook(const OrderBook &&) = delete;
+    ExchangeOrderBook(const ExchangeOrderBook &&) = delete;
 
-    auto operator=(const OrderBook &) -> OrderBook & = delete;
+    auto operator=(const ExchangeOrderBook &) -> ExchangeOrderBook & = delete;
 
-    auto operator=(const OrderBook &&) -> OrderBook & = delete;
+    auto operator=(const ExchangeOrderBook &&) -> ExchangeOrderBook & = delete;
 
    private:
     common::TickerId ticker_id_ = common::TICKER_ID_INVALID;
@@ -58,7 +59,7 @@ class OrderBook final {
     // No need map for each side because there can't be both ask and bid orders at the same price (they'll be matched).
     OrdersAtPriceMap price_orders_at_price_;
 
-    common::MemoryPool<Order> order_pool_;
+    common::MemoryPool<ExchangeOrder> order_pool_;
 
     MEClientResponse client_response_;
     MEMarketUpdate market_update_;
@@ -166,14 +167,14 @@ class OrderBook final {
     }
 
     auto Match(common::TickerId ticker_id, common::ClientId client_id, common::Side side,
-               common::OrderId client_order_id, common::OrderId new_market_order_id, Order *bid_itr,
+               common::OrderId client_order_id, common::OrderId new_market_order_id, ExchangeOrder *bid_itr,
                common::Qty *leaves_qty) noexcept;
 
     auto CheckForMatch(common::ClientId client_id, common::OrderId client_order_id, common::TickerId ticker_id,
                        common::Side side, common::Price price, common::Qty qty,
                        common::Qty new_market_order_id) noexcept;
 
-    auto RemoveOrder(Order *order) noexcept {
+    auto RemoveOrder(ExchangeOrder *order) noexcept {
         auto orders_at_price = GetOrdersAtPrice(order->price_);
 
         if (order->prev_order_ == order) {  // only one element.
@@ -195,7 +196,7 @@ class OrderBook final {
         order_pool_.Deallocate(order);
     }
 
-    auto AddOrder(Order *order) noexcept {
+    auto AddOrder(ExchangeOrder *order) noexcept {
         const auto orders_at_price = GetOrdersAtPrice(order->price_);
 
         if (orders_at_price == nullptr) {
@@ -217,6 +218,6 @@ class OrderBook final {
     }
 };
 
-using OrderBookMap = std::array<OrderBook *, common::ME_MAX_TICKERS>;
+using OrderBookMap = std::array<ExchangeOrderBook *, common::ME_MAX_TICKERS>;
 
 }  // namespace exchange
