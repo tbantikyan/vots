@@ -115,8 +115,8 @@ auto OrderBook::CheckForMatch(common::ClientId client_id, common::OrderId client
     return leaves_qty;
 }
 
-auto OrderBook::Add(common::ClientId client_id, common::OrderId client_order_id, common::TickerId ticker_id,
-                    common::Side side, common::Price price, common::Qty qty) noexcept -> void {
+void OrderBook::Add(common::ClientId client_id, common::OrderId client_order_id, common::TickerId ticker_id,
+                    common::Side side, common::Price price, common::Qty qty) noexcept {
     const auto new_market_order_id = GenerateNewMarketOrderId();
     client_response_ = {.type_ = ClientResponseType::ACCEPTED,
                         .client_id_ = client_id,
@@ -149,8 +149,7 @@ auto OrderBook::Add(common::ClientId client_id, common::OrderId client_order_id,
     }
 }
 
-auto OrderBook::Cancel(common::ClientId client_id, common::OrderId order_id, common::TickerId ticker_id) noexcept
-    -> void {
+void OrderBook::Cancel(common::ClientId client_id, common::OrderId order_id, common::TickerId ticker_id) noexcept {
     auto is_cancelable = (client_id < cid_oid_to_order_.size());
     Order *exchange_order = nullptr;
     if (is_cancelable) [[likely]] {
