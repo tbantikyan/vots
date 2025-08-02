@@ -15,6 +15,7 @@
 #include "common/types.hpp"
 
 namespace trading {
+
 struct TradingOrder {
     common::OrderId order_id_ = common::ORDER_ID_INVALID;
     common::Side side_ = common::Side::INVALID;
@@ -109,4 +110,5 @@ struct BBO {
         return ss.str();
     };
 };
+
 }  // namespace trading
