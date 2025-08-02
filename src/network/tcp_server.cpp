@@ -11,7 +11,7 @@ auto TCPServer::AddToEpollList(TCPSocket *socket) {
 }
 
 // Start listening for connections on the provided interface and port.
-auto TCPServer::Listen(const std::string &iface, int port) -> void {
+void TCPServer::Listen(const std::string &iface, int port) {
     epoll_fd_ = epoll_create(1);
     ASSERT(epoll_fd_ >= 0, "epoll_create() failed error:" + std::string(std::strerror(errno)));
 
@@ -23,7 +23,7 @@ auto TCPServer::Listen(const std::string &iface, int port) -> void {
 }
 
 // Publish outgoing data from the send buffer and read incoming data from the receive buffer.
-auto TCPServer::SendAndRecv() noexcept -> void {
+void TCPServer::SendAndRecv() noexcept {
     auto recv = false;
 
     std::ranges::for_each(receive_sockets_, [&recv](auto socket) { recv |= socket->SendAndRecv(); });
@@ -36,7 +36,7 @@ auto TCPServer::SendAndRecv() noexcept -> void {
 }
 
 // Check for new connections or dead connections and update containers that track the sockets.
-auto TCPServer::Poll() noexcept -> void {
+void TCPServer::Poll() noexcept {
     const int max_events = 1 + send_sockets_.size() + receive_sockets_.size();
 
     const int n = epoll_wait(epoll_fd_, events_, max_events, 0);

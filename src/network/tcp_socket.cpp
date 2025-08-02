@@ -70,7 +70,7 @@ auto TCPSocket::SendAndRecv() noexcept -> bool {
 }
 
 // Write outgoing data to the send buffers.
-auto TCPSocket::Send(const void *data, size_t len) noexcept -> void {
+void TCPSocket::Send(const void *data, size_t len) noexcept {
     memcpy(outbound_data_.data() + next_send_valid_index_, data, len);
     next_send_valid_index_ += len;
 }
