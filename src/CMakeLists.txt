@@ -5,6 +5,7 @@ add_subdirectory(order_server)
 add_library(vots STATIC ${ALL_OBJECT_FILES})
 
 set(VOTS_LIBS
+        vots_market_data
         vots_matching_engine
         vots_network
         vots_order_server
