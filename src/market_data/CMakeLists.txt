@@ -1,6 +1,7 @@
 add_library(
         vots_market_data
         OBJECT
+        market_data_consumer.cpp
         market_data_publisher.cpp
         snapshot_synthesizer.cpp
     )
