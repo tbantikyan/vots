@@ -9,7 +9,7 @@ MatchingEngine::MatchingEngine(ClientRequestLFQueue *client_requests, ClientResp
       outgoing_md_updates_(market_updates),
       logger_("exchange_matching_engine.log") {
     for (size_t i = 0; i < ticker_order_book_.size(); ++i) {
-        ticker_order_book_[i] = new OrderBook(i, &logger_, this);
+        ticker_order_book_[i] = new ExchangeOrderBook(i, &logger_, this);
     }
 }
 

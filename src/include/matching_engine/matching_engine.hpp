@@ -7,7 +7,7 @@
 
 #include "common/integrity.hpp"
 #include "market_data/market_update.hpp"
-#include "order_book.hpp"
+#include "exchange_order_book.hpp"
 #include "order_server/client_request.hpp"
 #include "order_server/client_response.hpp"
 #include "runtime/lock_free_queue.hpp"

@@ -11,7 +11,7 @@
 #include "common/types.hpp"
 #include "logging/logger.hpp"
 #include "market_update.hpp"
-#include "matching_engine/order.hpp"
+#include "matching_engine/exchange_order.hpp"
 #include "network/mcast_socket.hpp"
 #include "runtime/lock_free_queue.hpp"
 #include "runtime/memory_pool.hpp"
