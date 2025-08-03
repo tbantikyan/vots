@@ -111,4 +111,5 @@ class OrderManager {
     trading::OMOrderTickerSideMap ticker_side_order_;
     common::OrderId next_order_id_ = 1;
 };
+
 }  // namespace trading
