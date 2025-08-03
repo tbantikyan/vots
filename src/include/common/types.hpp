@@ -8,6 +8,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <limits>
+#include <sstream>
 #include <string>
 
 namespace common {
@@ -107,5 +108,22 @@ inline auto SideToString(Side side) -> std::string {
 constexpr auto SideToIndex(Side side) noexcept { return static_cast<size_t>(side) + 1; }
 
 constexpr auto SideToValue(Side side) noexcept { return static_cast<int>(side); }
+
+struct RiskCfg {
+    Qty max_order_size_ = 0;
+    Qty max_position_ = 0;
+    double max_loss_ = 0;
+
+    auto ToString() const {
+        std::stringstream ss;
+
+        ss << "RiskCfg{"
+           << "max-order-size:" << QtyToString(max_order_size_) << " "
+           << "max-position:" << QtyToString(max_position_) << " "
+           << "max-loss:" << max_loss_ << "}";
+
+        return ss.str();
+    }
+};
 
 }  // namespace common
