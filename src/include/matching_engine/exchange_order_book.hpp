@@ -14,7 +14,7 @@
 #include "exchange_order.hpp"
 #include "logging/logger.hpp"
 #include "market_data/market_update.hpp"
-#include "order_server/client_response.hpp"
+#include "order_gateway/client_response.hpp"
 #include "runtime/memory_pool.hpp"
 
 namespace exchange {

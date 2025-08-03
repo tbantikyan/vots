@@ -2,7 +2,7 @@
 
 #include "market_data/market_data_publisher.hpp"
 #include "matching_engine/matching_engine.hpp"
-#include "order_server/order_server.hpp"
+#include "order_gateway/order_server.hpp"
 
 common::Logger *logger = nullptr;
 exchange::MatchingEngine *matching_engine = nullptr;
