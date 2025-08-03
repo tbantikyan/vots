@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <limits>
@@ -125,5 +126,23 @@ struct RiskCfg {
         return ss.str();
     }
 };
+
+struct TradeEngineCfg {
+    Qty clip_ = 0;
+    double threshold_ = 0;
+    RiskCfg risk_cfg_;
+
+    auto ToString() const {
+        std::stringstream ss;
+        ss << "TradeEngineCfg{"
+           << "clip:" << QtyToString(clip_) << " "
+           << "thresh:" << threshold_ << " "
+           << "risk:" << risk_cfg_.ToString() << "}";
+
+        return ss.str();
+    }
+};
+
+using TradeEngineCfgMap = std::array<TradeEngineCfg, ME_MAX_TICKERS>;
 
 }  // namespace common
