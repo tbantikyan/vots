@@ -8,8 +8,8 @@
 #include "common/integrity.hpp"
 #include "market_data/market_update.hpp"
 #include "exchange_order_book.hpp"
-#include "order_server/client_request.hpp"
-#include "order_server/client_response.hpp"
+#include "order_gateway/client_request.hpp"
+#include "order_gateway/client_response.hpp"
 #include "runtime/lock_free_queue.hpp"
 #include "runtime/threads.hpp"
 
