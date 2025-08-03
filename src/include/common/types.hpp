@@ -5,9 +5,11 @@
 
 #pragma once
 
+#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <limits>
+#include <sstream>
 #include <string>
 
 namespace common {
@@ -107,5 +109,40 @@ inline auto SideToString(Side side) -> std::string {
 constexpr auto SideToIndex(Side side) noexcept { return static_cast<size_t>(side) + 1; }
 
 constexpr auto SideToValue(Side side) noexcept { return static_cast<int>(side); }
+
+struct RiskCfg {
+    Qty max_order_size_ = 0;
+    Qty max_position_ = 0;
+    double max_loss_ = 0;
+
+    auto ToString() const {
+        std::stringstream ss;
+
+        ss << "RiskCfg{"
+           << "max-order-size:" << QtyToString(max_order_size_) << " "
+           << "max-position:" << QtyToString(max_position_) << " "
+           << "max-loss:" << max_loss_ << "}";
+
+        return ss.str();
+    }
+};
+
+struct TradeEngineCfg {
+    Qty clip_ = 0;
+    double threshold_ = 0;
+    RiskCfg risk_cfg_;
+
+    auto ToString() const {
+        std::stringstream ss;
+        ss << "TradeEngineCfg{"
+           << "clip:" << QtyToString(clip_) << " "
+           << "thresh:" << threshold_ << " "
+           << "risk:" << risk_cfg_.ToString() << "}";
+
+        return ss.str();
+    }
+};
+
+using TradeEngineCfgMap = std::array<TradeEngineCfg, ME_MAX_TICKERS>;
 
 }  // namespace common
