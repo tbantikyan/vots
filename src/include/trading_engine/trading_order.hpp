@@ -41,7 +41,7 @@ struct TradingOrder {
 
     auto ToString() const -> std::string {
         std::stringstream ss;
-        ss << "MarketOrder"
+        ss << "TradingOrder"
            << "["
            << "oid:" << common::OrderIdToString(order_id_) << " "
            << "side:" << common::SideToString(side_) << " "
@@ -59,21 +59,21 @@ struct TradingOrder {
     }
 };
 
-using OrderHashMap = std::array<TradingOrder *, common::ME_MAX_ORDER_IDS>;
+using OrderMap = std::array<TradingOrder *, common::ME_MAX_ORDER_IDS>;
 
-struct MarketOrdersAtPrice {
+struct TradingOrdersAtPrice {
     common::Side side_ = common::Side::INVALID;
     common::Price price_ = common::PRICE_INVALID;
 
     TradingOrder *first_mkt_order_ = nullptr;
 
-    MarketOrdersAtPrice *prev_entry_ = nullptr;
-    MarketOrdersAtPrice *next_entry_ = nullptr;
+    TradingOrdersAtPrice *prev_entry_ = nullptr;
+    TradingOrdersAtPrice *next_entry_ = nullptr;
 
-    MarketOrdersAtPrice() = default;
+    TradingOrdersAtPrice() = default;
 
-    MarketOrdersAtPrice(common::Side side, common::Price price, TradingOrder *first_mkt_order,
-                        MarketOrdersAtPrice *prev_entry, MarketOrdersAtPrice *next_entry)
+    TradingOrdersAtPrice(common::Side side, common::Price price, TradingOrder *first_mkt_order,
+                        TradingOrdersAtPrice *prev_entry, TradingOrdersAtPrice *next_entry)
         : side_(side),
           price_(price),
           first_mkt_order_(first_mkt_order),
@@ -82,7 +82,7 @@ struct MarketOrdersAtPrice {
 
     auto ToString() const {
         std::stringstream ss;
-        ss << "MarketOrdersAtPrice["
+        ss << "TradingOrdersAtPrice["
            << "side:" << common::SideToString(side_) << " "
            << "price:" << common::PriceToString(price_) << " "
            << "first_mkt_order:" << ((first_mkt_order_ != nullptr) ? first_mkt_order_->ToString() : "null") << " "
@@ -95,7 +95,7 @@ struct MarketOrdersAtPrice {
     }
 };
 
-using OrdersAtPriceHashMap = std::array<MarketOrdersAtPrice *, common::ME_MAX_PRICE_LEVELS>;
+using OrdersAtPriceMap = std::array<TradingOrdersAtPrice *, common::ME_MAX_PRICE_LEVELS>;
 
 // Best-Bid Offer data structure that tracks the best bid and ask offers and the quantities of these offers.
 struct BBO {
