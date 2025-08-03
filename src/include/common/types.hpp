@@ -87,7 +87,7 @@ inline auto PriorityToString(Priority priority) -> std::string {
     return std::to_string(priority);
 }
 
-enum class Side : int8_t { INVALID = 0, BUY = 1, SELL = -1 };
+enum class Side : int8_t { INVALID = 0, BUY = 1, SELL = -1, MAX = 2 };
 
 inline auto SideToString(Side side) -> std::string {
     switch (side) {
@@ -97,9 +97,15 @@ inline auto SideToString(Side side) -> std::string {
             return "SELL";
         case Side::INVALID:
             return "INVALID";
+        case Side::MAX:
+            return "MAX";
     }
 
     return "UNKNOWN";
 }
+
+constexpr auto SideToIndex(Side side) noexcept { return static_cast<size_t>(side) + 1; }
+
+constexpr auto SideToValue(Side side) noexcept { return static_cast<int>(side); }
 
 }  // namespace common
