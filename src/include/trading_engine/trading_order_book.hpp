@@ -17,11 +17,11 @@ namespace trading {
 
 class TradeEngine;
 
-class MarketOrderBook final {
+class TradingOrderBook final {
    public:
-    MarketOrderBook(common::TickerId ticker_id, common::Logger *logger);
+    TradingOrderBook(common::TickerId ticker_id, common::Logger *logger);
 
-    ~MarketOrderBook();
+    ~TradingOrderBook();
 
     auto OnMarketUpdate(const exchange::MEMarketUpdate *market_update) noexcept -> void;
 
@@ -62,28 +62,28 @@ class MarketOrderBook final {
     auto ToString(bool detailed, bool validity_check) const -> std::string;
 
     // Deleted default, copy & move constructors and assignment-operators.
-    MarketOrderBook() = delete;
+    TradingOrderBook() = delete;
 
-    MarketOrderBook(const MarketOrderBook &) = delete;
+    TradingOrderBook(const TradingOrderBook &) = delete;
 
-    MarketOrderBook(const MarketOrderBook &&) = delete;
+    TradingOrderBook(const TradingOrderBook &&) = delete;
 
-    auto operator=(const MarketOrderBook &) -> MarketOrderBook & = delete;
+    auto operator=(const TradingOrderBook &) -> TradingOrderBook & = delete;
 
-    auto operator=(const MarketOrderBook &&) -> MarketOrderBook & = delete;
+    auto operator=(const TradingOrderBook &&) -> TradingOrderBook & = delete;
 
    private:
     const common::TickerId TICKER_ID;
 
     TradeEngine *trade_engine_ = nullptr;
 
-    OrderHashMap oid_to_order_;
+    OrderMap oid_to_order_;
 
-    common::MemoryPool<MarketOrdersAtPrice> orders_at_price_pool_;
-    MarketOrdersAtPrice *bids_by_price_ = nullptr;
-    MarketOrdersAtPrice *asks_by_price_ = nullptr;
+    common::MemoryPool<TradingOrdersAtPrice> orders_at_price_pool_;
+    TradingOrdersAtPrice *bids_by_price_ = nullptr;
+    TradingOrdersAtPrice *asks_by_price_ = nullptr;
 
-    OrdersAtPriceHashMap price_orders_at_price_;
+    OrdersAtPriceMap price_orders_at_price_;
 
     common::MemoryPool<TradingOrder> order_pool_;
 
@@ -95,11 +95,11 @@ class MarketOrderBook final {
    private:
     auto PriceToIndex(common::Price price) const noexcept { return (price % common::ME_MAX_PRICE_LEVELS); }
 
-    auto GetOrdersAtPrice(common::Price price) const noexcept -> MarketOrdersAtPrice * {
+    auto GetOrdersAtPrice(common::Price price) const noexcept -> TradingOrdersAtPrice * {
         return price_orders_at_price_.at(PriceToIndex(price));
     }
 
-    auto AddOrdersAtPrice(MarketOrdersAtPrice *new_orders_at_price) noexcept {
+    auto AddOrdersAtPrice(TradingOrdersAtPrice *new_orders_at_price) noexcept {
         price_orders_at_price_.at(PriceToIndex(new_orders_at_price->price_)) = new_orders_at_price;
 
         const auto best_orders_by_price =
@@ -222,5 +222,5 @@ class MarketOrderBook final {
     }
 };
 
-using MarketOrderBookHashMap = std::array<MarketOrderBook *, common::ME_MAX_TICKERS>;
+using TradingOrderBookMap = std::array<TradingOrderBook *, common::ME_MAX_TICKERS>;
 }  // namespace trading
