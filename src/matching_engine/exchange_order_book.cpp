@@ -1,5 +1,6 @@
 #include "matching_engine/exchange_order_book.hpp"
 
+#include "common/perf_utils.hpp"
 #include "matching_engine/matching_engine.hpp"
 
 namespace exchange {
@@ -75,7 +76,9 @@ auto ExchangeOrderBook::Match(common::TickerId ticker_id, common::ClientId clien
                           .priority_ = common::PRIORITY_INVALID};
         matching_engine_->SendMarketUpdate(&market_update_);
 
+        START_MEASURE(exchange_me_order_book_remove_order);
         RemoveOrder(order);
+        END_MEASURE(exchange_me_order_book_remove_order, (*logger_));
     } else {
         // Upon partial execution, send a MODIFY message as well.
         market_update_ = {.type_ = MarketUpdateType::MODIFY,
@@ -101,7 +104,9 @@ auto ExchangeOrderBook::CheckForMatch(common::ClientId client_id, common::OrderI
                 break;
             }
 
+            START_MEASURE(exchange_me_order_book_match);
             Match(ticker_id, client_id, side, client_order_id, new_market_order_id, ask_itr, &leaves_qty);
+            END_MEASURE(exchange_me_order_book_match, (*logger_));
         }
     }
     if (side == common::Side::SELL) {
@@ -111,7 +116,9 @@ auto ExchangeOrderBook::CheckForMatch(common::ClientId client_id, common::OrderI
                 break;
             }
 
+            START_MEASURE(exchange_me_order_book_match);
             Match(ticker_id, client_id, side, client_order_id, new_market_order_id, bid_itr, &leaves_qty);
+            END_MEASURE(exchange_me_order_book_match, (*logger_));
         }
     }
 
@@ -132,14 +139,18 @@ void ExchangeOrderBook::Add(common::ClientId client_id, common::OrderId client_o
                         .leaves_qty_ = qty};
     matching_engine_->SendClientResponse(&client_response_);
 
+    START_MEASURE(exchange_me_order_book_check_for_match);
     const auto leaves_qty = CheckForMatch(client_id, client_order_id, ticker_id, side, price, qty, new_market_order_id);
+    END_MEASURE(exchange_me_order_book_check_for_match, (*logger_));
 
     if (leaves_qty != 0) [[likely]] {
         const auto priority = GetNextPriority(price);
 
         auto order = order_pool_.Allocate(ticker_id, client_id, client_order_id, new_market_order_id, side, price,
                                           leaves_qty, priority, nullptr, nullptr);
+        START_MEASURE(exchange_me_order_book_add_order);
         AddOrder(order);
+        END_MEASURE(exchange_me_order_book_add_order, (*logger_));
 
         market_update_ = {.type_ = MarketUpdateType::ADD,
                           .order_id_ = new_market_order_id,
@@ -190,7 +201,9 @@ void ExchangeOrderBook::Cancel(common::ClientId client_id, common::OrderId order
                           .qty_ = 0,
                           .priority_ = exchange_order->priority_};
 
+        START_MEASURE(exchange_me_order_book_remove_order);
         RemoveOrder(exchange_order);
+        END_MEASURE(exchange_me_order_book_remove_order, (*logger_));
 
         matching_engine_->SendMarketUpdate(&market_update_);
     }
