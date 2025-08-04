@@ -5,7 +5,7 @@
 #include "common/integrity.hpp"
 #include "feature_engine.hpp"
 #include "logging/logger.hpp"
-#include "logging/time_utils.hpp"
+#include "common/time_utils.hpp"
 #include "market_data/market_update.hpp"
 #include "order_gateway/client_request.hpp"
 #include "order_gateway/client_response.hpp"
