@@ -1,7 +1,7 @@
 add_library(
         vots_trading_engine
         OBJECT
-        trading_order_book.cpp
+        trading_engine.cpp
     )
 
 target_link_libraries(

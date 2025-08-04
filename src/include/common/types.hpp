@@ -110,6 +110,36 @@ constexpr auto SideToIndex(Side side) noexcept { return static_cast<size_t>(side
 
 constexpr auto SideToValue(Side side) noexcept { return static_cast<int>(side); }
 
+enum class AlgoType : int8_t { INVALID = 0, RANDOM = 1, MAKER = 2, TAKER = 3, MAX = 4 };
+
+inline auto AlgoTypeToString(AlgoType type) -> std::string {
+    switch (type) {
+        case AlgoType::RANDOM:
+            return "RANDOM";
+        case AlgoType::MAKER:
+            return "MAKER";
+        case AlgoType::TAKER:
+            return "TAKER";
+        case AlgoType::INVALID:
+            return "INVALID";
+        case AlgoType::MAX:
+            return "MAX";
+    }
+
+    return "UNKNOWN";
+}
+
+inline auto StringToAlgoType(const std::string &str) -> AlgoType {
+    for (auto i = static_cast<int>(AlgoType::INVALID); i <= static_cast<int>(AlgoType::MAX); ++i) {
+        const auto algo_type = static_cast<AlgoType>(i);
+        if (AlgoTypeToString(algo_type) == str) {
+            return algo_type;
+        }
+    }
+
+    return AlgoType::INVALID;
+}
+
 struct RiskCfg {
     Qty max_order_size_ = 0;
     Qty max_position_ = 0;
