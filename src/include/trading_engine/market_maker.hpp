@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "common/perf_utils.hpp"
 #include "feature_engine.hpp"
 #include "logging/logger.hpp"
 #include "order_manager.hpp"
@@ -47,7 +48,9 @@ class MarketMaker {
             const auto bid_price = bbo->bid_price_ - (fair_price - bbo->bid_price_ >= threshold ? 0 : 1);
             const auto ask_price = bbo->ask_price_ + (bbo->ask_price_ - fair_price >= threshold ? 0 : 1);
 
+            START_MEASURE(trading_order_manager_move_orders);
             order_manager_->MoveOrders(ticker_id, bid_price, ask_price, clip);
+            END_MEASURE(trading_order_manager_move_orders, (*logger_));
         }
     }
 
@@ -59,7 +62,10 @@ class MarketMaker {
     void OnOrderUpdate(const exchange::MEClientResponse *client_response) noexcept {
         logger_->Log("%:% %() % %\n", __FILE__, __LINE__, __FUNCTION__, common::GetCurrentTimeStr(&time_str_),
                      client_response->ToString().c_str());
+
+        START_MEASURE(trading_order_manager_on_order_update);
         order_manager_->OnOrderUpdate(client_response);
+        END_MEASURE(trading_order_manager_on_order_update, (*logger_));
     }
 
     // Deleted default, copy & move constructors and assignment-operators.

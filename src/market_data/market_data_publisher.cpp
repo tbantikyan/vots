@@ -1,5 +1,7 @@
 #include "market_data/market_data_publisher.hpp"
 
+#include "common/perf_utils.hpp"
+
 namespace exchange {
 
 MarketDataPublisher::MarketDataPublisher(MEMarketUpdateLFQueue *market_updates, const std::string &iface,
@@ -21,13 +23,19 @@ void MarketDataPublisher::Run() noexcept {
         for (auto market_update = outgoing_md_updates_->GetNextToRead();
              (outgoing_md_updates_->Size() != 0) && (market_update != nullptr);
              market_update = outgoing_md_updates_->GetNextToRead()) {
+            TTT_MEASURE(t5_market_data_publisher_lf_queue_read, logger_);
+
             logger_.Log("%:% %() % Sending seq:% %\n", __FILE__, __LINE__, __FUNCTION__,
                         common::GetCurrentTimeStr(&time_str_), next_inc_seq_num_, market_update->ToString().c_str());
 
+            START_MEASURE(exchange_mcast_socket_send);
             // Sends an MDPMarketUpdate as its components (a sequence number followed by an MEMarketUpdate).
             incremental_socket_.Send(&next_inc_seq_num_, sizeof(next_inc_seq_num_));
             incremental_socket_.Send(market_update, sizeof(MEMarketUpdate));
+            END_MEASURE(exchange_mcast_socket_send, logger_);
+
             outgoing_md_updates_->UpdateReadIndex();
+            TTT_MEASURE(t6_market_data_publisher_udp_write, logger_);
 
             auto next_write = snapshot_md_updates_.GetNextToWriteTo();
             next_write->seq_num_ = next_inc_seq_num_;

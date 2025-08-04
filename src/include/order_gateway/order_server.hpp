@@ -12,6 +12,7 @@
 #include "client_request.hpp"
 #include "client_response.hpp"
 #include "common/integrity.hpp"
+#include "common/perf_utils.hpp"
 #include "fifo_sequencer.hpp"
 #include "network/tcp_server.hpp"
 #include "runtime/threads.hpp"
@@ -42,6 +43,8 @@ class OrderServer {
             for (auto client_response = outgoing_responses_->GetNextToRead();
                  (outgoing_responses_->Size() != 0) && (client_response != nullptr);
                  client_response = outgoing_responses_->GetNextToRead()) {
+                TTT_MEASURE(t5t_order_server_lf_queue_read, logger_);
+
                 auto &next_outgoing_seq_num = cid_next_outgoing_seq_num_[client_response->client_id_];
                 logger_.Log("%:% %() % Processing cid:% seq:% %\n", __FILE__, __LINE__, __FUNCTION__,
                             common::GetCurrentTimeStr(&time_str_), client_response->client_id_, next_outgoing_seq_num,
@@ -49,13 +52,15 @@ class OrderServer {
 
                 ASSERT(cid_tcp_socket_[client_response->client_id_] != nullptr,
                        "Dont have a TCPSocket for ClientId:" + std::to_string(client_response->client_id_));
-
+                START_MEASURE(exchange_tcp_socket_send);
                 // Sends an OMClientResponse as its components (a sequence number followed by an MEClientResponse).
                 cid_tcp_socket_[client_response->client_id_]->Send(&next_outgoing_seq_num,
                                                                    sizeof(next_outgoing_seq_num));
                 cid_tcp_socket_[client_response->client_id_]->Send(client_response, sizeof(MEClientResponse));
+                END_MEASURE(exchange_tcp_socket_send, logger_);
 
                 outgoing_responses_->UpdateReadIndex();
+                TTT_MEASURE(t6t_order_server_tcp_write, logger_);
 
                 ++next_outgoing_seq_num;
             }
@@ -64,6 +69,8 @@ class OrderServer {
 
     // Read client request from the TCP receive buffer, check for sequence gaps and forward it to the FIFO sequencer.
     auto RecvCallback(common::TCPSocket *socket, common::Nanos rx_time) noexcept {
+        TTT_MEASURE(t1_order_server_tcp_read, logger_);
+
         logger_.Log("%:% %() % Received socket:% len:% rx:%\n", __FILE__, __LINE__, __FUNCTION__,
                     common::GetCurrentTimeStr(&time_str_), socket->socket_fd_, socket->next_rcv_valid_index_, rx_time);
 
@@ -98,7 +105,9 @@ class OrderServer {
 
                 ++next_exp_seq_num;
 
+                START_MEASURE(exchange_fifo_sequencer_add_client_request);
                 fifo_sequencer_.AddClientRequest(rx_time, request->me_client_request_);
+                END_MEASURE(exchange_fifo_sequencer_add_client_request, logger_);
             }
 
             // Shift down leftover bytes to the start of inbound_data_.
@@ -109,7 +118,11 @@ class OrderServer {
 
     // End of reading incoming messages across all the TCP connections, sequence and publish the client requests to the
     // matching engine.
-    auto RecvFinishedCallback() noexcept { fifo_sequencer_.SequenceAndPublish(); }
+    auto RecvFinishedCallback() noexcept {
+        START_MEASURE(exchange_fifo_sequencer_sequence_and_publish);
+        fifo_sequencer_.SequenceAndPublish();
+        END_MEASURE(exchange_fifo_sequencer_sequence_and_publish, logger_);
+    }
 
     // Deleted default, copy & move constructors and assignment-operators.
     OrderServer() = delete;

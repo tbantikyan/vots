@@ -11,7 +11,7 @@
 
 #include "common/integrity.hpp"
 #include "log_type.hpp"
-#include "logging/time_utils.hpp"
+#include "common/time_utils.hpp"
 #include "runtime/lock_free_queue.hpp"
 #include "runtime/threads.hpp"
 

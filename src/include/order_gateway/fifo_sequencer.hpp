@@ -10,6 +10,7 @@
 #include "common/integrity.hpp"
 #include "logging/logger.hpp"
 #include "runtime/threads.hpp"
+#include "common/perf_utils.hpp"
 
 namespace exchange {
 
@@ -61,6 +62,7 @@ class FIFOSequencer {
             auto next_write = incoming_requests_->GetNextToWriteTo();
             *next_write = client_request.request_;
             incoming_requests_->UpdateWriteIndex();
+            TTT_MEASURE(t2_order_server_lf_queue_write, (*logger_));
         }
 
         pending_size_ = 0;

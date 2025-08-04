@@ -1,5 +1,7 @@
 #include "market_data/market_data_consumer.hpp"
 
+#include "common/perf_utils.hpp"
+
 namespace trading {
 MarketDataConsumer::MarketDataConsumer(common::ClientId client_id, exchange::MEMarketUpdateLFQueue *market_updates,
                                        const std::string &iface,
@@ -180,6 +182,9 @@ auto MarketDataConsumer::QueueMessage(bool is_snapshot, const exchange::MDPMarke
 // Process a market data update, the consumer needs to use the socket parameter to figure out whether this came from the
 // snapshot or the incremental stream.
 void MarketDataConsumer::RecvCallback(common::McastSocket *socket) noexcept {
+    TTT_MEASURE(t7_market_data_consumer_udp_read, logger_);
+
+    START_MEASURE(trading_market_data_consumer_recv_callback);
     const auto is_snapshot = (socket->socket_fd_ == snapshot_mcast_socket_.socket_fd_);
     if (is_snapshot && !in_recovery_) [[unlikely]] {  // market update was read from the snapshot market data stream and
                                                       // we are not in recovery, so we dont need it and discard it.
@@ -225,6 +230,7 @@ void MarketDataConsumer::RecvCallback(common::McastSocket *socket) noexcept {
                 auto next_write = incoming_md_updates_->GetNextToWriteTo();
                 *next_write = request->me_market_update_;
                 incoming_md_updates_->UpdateWriteIndex();
+                TTT_MEASURE(t8_market_data_consumer_lf_queue_write, logger_);
             }
         }
 
@@ -232,6 +238,7 @@ void MarketDataConsumer::RecvCallback(common::McastSocket *socket) noexcept {
         memcpy(socket->inbound_data_.data(), socket->inbound_data_.data() + i, socket->next_rcv_valid_index_ - i);
         socket->next_rcv_valid_index_ -= i;
     }
+    END_MEASURE(trading_market_data_consumer_recv_callback, logger_);
 }
 
 }  // namespace trading

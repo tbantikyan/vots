@@ -1,5 +1,6 @@
 #include "trading_engine/trading_order_book.hpp"
 
+#include "common/perf_utils.hpp"
 #include "trading_engine/trading_engine.hpp"
 
 namespace trading {
@@ -30,7 +31,9 @@ void TradingOrderBook::OnMarketUpdate(const exchange::MEMarketUpdate *market_upd
         case exchange::MarketUpdateType::ADD: {
             auto order = order_pool_.Allocate(market_update->order_id_, market_update->side_, market_update->price_,
                                               market_update->qty_, market_update->priority_, nullptr, nullptr);
+            START_MEASURE(trading_market_order_book_add_order);
             AddOrder(order);
+            END_MEASURE(trading_market_order_book_add_order, (*logger_));
         } break;
         case exchange::MarketUpdateType::MODIFY: {
             auto order = oid_to_order_.at(market_update->order_id_);
@@ -38,7 +41,9 @@ void TradingOrderBook::OnMarketUpdate(const exchange::MEMarketUpdate *market_upd
         } break;
         case exchange::MarketUpdateType::CANCEL: {
             auto order = oid_to_order_.at(market_update->order_id_);
+            START_MEASURE(trading_market_order_book_remove_order);
             RemoveOrder(order);
+            END_MEASURE(trading_market_order_book_remove_order, (*logger_));
         } break;
         case exchange::MarketUpdateType::TRADE: {
             trade_engine_->OnTradeUpdate(market_update, this);
@@ -75,7 +80,9 @@ void TradingOrderBook::OnMarketUpdate(const exchange::MEMarketUpdate *market_upd
             break;
     }
 
+    START_MEASURE(trading_market_order_book_update_bbo);
     UpdateBbo(bid_updated, ask_updated);
+    END_MEASURE(trading_market_order_book_update_bbo, (*logger_));
 
     logger_->Log("%:% %() % % %", __FILE__, __LINE__, __FUNCTION__, common::GetCurrentTimeStr(&time_str_),
                  market_update->ToString(), bbo_.ToString());
