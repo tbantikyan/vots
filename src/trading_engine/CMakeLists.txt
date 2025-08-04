@@ -3,6 +3,7 @@ add_library(
         OBJECT
         order_manager.cpp
         trading_engine.cpp
+        trading_order_book.cpp
     )
 
 target_link_libraries(
