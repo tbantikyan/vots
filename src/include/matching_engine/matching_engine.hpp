@@ -6,8 +6,9 @@
 #pragma once
 
 #include "common/integrity.hpp"
-#include "market_data/market_update.hpp"
+#include "common/perf_utils.hpp"
 #include "exchange_order_book.hpp"
+#include "market_data/market_update.hpp"
 #include "order_gateway/client_request.hpp"
 #include "order_gateway/client_response.hpp"
 #include "runtime/lock_free_queue.hpp"
@@ -30,12 +31,18 @@ class MatchingEngine final {
         auto order_book = ticker_order_book_[client_request->ticker_id_];
         switch (client_request->type_) {
             case ClientRequestType::NEW: {
+                START_MEASURE(exchange_me_order_book_add);
                 order_book->Add(client_request->client_id_, client_request->order_id_, client_request->ticker_id_,
                                 client_request->side_, client_request->price_, client_request->qty_);
+                END_MEASURE(exchange_me_order_book_add, logger_);
+
             } break;
 
             case ClientRequestType::CANCEL: {
+                START_MEASURE(exchange_me_order_book_cancel);
                 order_book->Cancel(client_request->client_id_, client_request->order_id_, client_request->ticker_id_);
+                END_MEASURE(exchange_me_order_book_cancel, logger_);
+
             } break;
 
             default: {
@@ -50,6 +57,7 @@ class MatchingEngine final {
         auto next_write = outgoing_ogw_responses_->GetNextToWriteTo();
         *next_write = std::move(*client_response);  // NOLINT
         outgoing_ogw_responses_->UpdateWriteIndex();
+        TTT_MEASURE(t4t_matching_engine_lf_queue_write, logger_);
     }
 
     auto SendMarketUpdate(const MEMarketUpdate *market_update) noexcept {
@@ -58,6 +66,7 @@ class MatchingEngine final {
         auto next_write = outgoing_md_updates_->GetNextToWriteTo();
         *next_write = *market_update;
         outgoing_md_updates_->UpdateWriteIndex();
+        TTT_MEASURE(t4_matching_engine_lf_queue_write, logger_);
     }
 
     auto Run() noexcept {
@@ -65,9 +74,13 @@ class MatchingEngine final {
         while (run_) {
             const auto me_client_request = incoming_requests_->GetNextToRead();
             if (me_client_request != nullptr) [[likely]] {
+                TTT_MEASURE(t3_matching_engine_lf_queue_read, logger_);
+
                 logger_.Log("%:% %() % Processing %\n", __FILE__, __LINE__, __FUNCTION__,
                             common::GetCurrentTimeStr(&time_str_), me_client_request->ToString());
+                START_MEASURE(exchange_matching_engine_process_client_request);
                 ProcessClientRequest(me_client_request);
+                END_MEASURE(exchange_matching_engine_process_client_request, logger_);
                 incoming_requests_->UpdateReadIndex();
             }
         }
