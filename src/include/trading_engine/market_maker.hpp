@@ -14,7 +14,7 @@ namespace trading {
 
 class MarketMaker {
    public:
-    MarketMaker(common::Logger *logger, TradeEngine *trade_engine, const FeatureEngine *feature_engine,
+    MarketMaker(common::Logger *logger, TradingEngine *trade_engine, const FeatureEngine *feature_engine,
                 OrderManager *order_manager, const common::TradeEngineCfgMap &ticker_cfg)
         : feature_engine_(feature_engine), order_manager_(order_manager), logger_(logger), TICKER_CFG(ticker_cfg) {
         // TODO(tbantikyan): implement TradeEngine

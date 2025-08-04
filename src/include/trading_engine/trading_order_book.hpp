@@ -15,7 +15,7 @@
 
 namespace trading {
 
-class TradeEngine;
+class TradingEngine;
 
 class TradingOrderBook final {
    public:
@@ -25,7 +25,7 @@ class TradingOrderBook final {
 
     auto OnMarketUpdate(const exchange::MEMarketUpdate *market_update) noexcept -> void;
 
-    auto SetTradeEngine(TradeEngine *trade_engine) { trade_engine_ = trade_engine; }
+    auto SetTradingEngine(TradingEngine *trade_engine) { trade_engine_ = trade_engine; }
 
     auto UpdateBbo(bool update_bid, bool update_ask) noexcept {
         if (update_bid) {
@@ -75,7 +75,7 @@ class TradingOrderBook final {
    private:
     const common::TickerId TICKER_ID;
 
-    TradeEngine *trade_engine_ = nullptr;
+    TradingEngine *trade_engine_ = nullptr;
 
     OrderMap oid_to_order_;
 

@@ -13,11 +13,11 @@
 
 namespace trading {
 
-class TradeEngine;
+class TradingEngine;
 
 class OrderManager {
    public:
-    OrderManager(common::Logger *logger, TradeEngine *trade_engine, trading::RiskManager &risk_manager)
+    OrderManager(common::Logger *logger, TradingEngine *trade_engine, trading::RiskManager &risk_manager)
         : trade_engine_(trade_engine), risk_manager_(risk_manager), logger_(logger) {}
 
     auto OnOrderUpdate(const exchange::MEClientResponse *client_response) noexcept -> void {
@@ -102,7 +102,7 @@ class OrderManager {
     auto operator=(const OrderManager &&) -> OrderManager & = delete;
 
    private:
-    TradeEngine *trade_engine_ = nullptr;
+    TradingEngine *trade_engine_ = nullptr;
     const trading::RiskManager &risk_manager_;
 
     std::string time_str_;
