@@ -20,6 +20,9 @@
 
 namespace trading {
 
+class MarketMaker;
+class LiquidityTaker;
+
 class TradingEngine {
    public:
     TradingEngine(common::ClientId client_id, common::AlgoType algo_type, const common::TradeEngineCfgMap &ticker_cfg,

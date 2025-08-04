@@ -9,22 +9,22 @@
 #include "feature_engine.hpp"
 #include "logging/logger.hpp"
 #include "order_manager.hpp"
+#include "trading_engine.hpp"
 
 namespace trading {
 
 class MarketMaker {
    public:
-    MarketMaker(common::Logger *logger, TradingEngine *trade_engine, const FeatureEngine *feature_engine,
+    MarketMaker(common::Logger *logger, TradingEngine *trading_engine, const FeatureEngine *feature_engine,
                 OrderManager *order_manager, const common::TradeEngineCfgMap &ticker_cfg)
         : feature_engine_(feature_engine), order_manager_(order_manager), logger_(logger), TICKER_CFG(ticker_cfg) {
-        // TODO(tbantikyan): implement TradeEngine
-        // trade_engine->algoOnOrderBookUpdate_ = [this](auto ticker_id, auto price, auto side, auto book) {
-        //     OnOrderBookUpdate(ticker_id, price, side, book);
-        // };
-        // trade_engine->algoOnTradeUpdate_ = [this](auto market_update, auto book) {
-        //     onTradeUpdate(market_update, book);
-        // };
-        // trade_engine->algoOnOrderUpdate_ = [this](auto client_response) { onOrderUpdate(client_response); };
+        trading_engine->algo_on_order_book_update_ = [this](auto ticker_id, auto price, auto side, auto book) {
+            OnOrderBookUpdate(ticker_id, price, side, book);
+        };
+        trading_engine->algo_on_trade_update_ = [this](auto market_update, auto book) {
+            OnTradeUpdate(market_update, book);
+        };
+        trading_engine->algo_on_order_update_ = [this](auto client_response) { OnOrderUpdate(client_response); };
     }
 
     auto OnOrderBookUpdate(common::TickerId ticker_id, common::Price price, common::Side side,
