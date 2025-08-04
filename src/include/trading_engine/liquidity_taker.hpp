@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "common/perf_utils.hpp"
 #include "feature_engine.hpp"
 #include "logging/logger.hpp"
 #include "order_manager.hpp"
@@ -50,11 +51,13 @@ class LiquidityTaker {
             const auto threshold = TICKER_CFG.at(market_update->ticker_id_).threshold_;
 
             if (agg_qty_ratio >= threshold) {
+                START_MEASURE(trading_order_manager_move_orders);
                 if (market_update->side_ == common::Side::BUY) {
                     order_manager_->MoveOrders(market_update->ticker_id_, bbo->ask_price_, common::PRICE_INVALID, clip);
                 } else {
                     order_manager_->MoveOrders(market_update->ticker_id_, common::PRICE_INVALID, bbo->bid_price_, clip);
                 }
+                END_MEASURE(trading_order_manager_move_orders, (*logger_));
             }
         }
     }
@@ -62,7 +65,9 @@ class LiquidityTaker {
     void OnOrderUpdate(const exchange::MEClientResponse *client_response) noexcept {
         logger_->Log("%:% %() % %\n", __FILE__, __LINE__, __FUNCTION__, common::GetCurrentTimeStr(&time_str_),
                      client_response->ToString().c_str());
+        START_MEASURE(trading_order_manager_on_order_update);
         order_manager_->OnOrderUpdate(client_response);
+        END_MEASURE(trading_order_manager_on_order_update, (*logger_));
     }
 
     // Deleted default, copy & move constructors and assignment-operators.
