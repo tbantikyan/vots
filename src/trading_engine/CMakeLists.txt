@@ -1,6 +1,7 @@
 add_library(
         vots_trading_engine
         OBJECT
+        order_manager.cpp
         trading_engine.cpp
     )
 
