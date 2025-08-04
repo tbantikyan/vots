@@ -17,8 +17,8 @@ class TradingEngine;
 
 class OrderManager {
    public:
-    OrderManager(common::Logger *logger, TradingEngine *trade_engine, trading::RiskManager &risk_manager)
-        : trade_engine_(trade_engine), risk_manager_(risk_manager), logger_(logger) {}
+    OrderManager(common::Logger *logger, TradingEngine *trading_engine, trading::RiskManager &risk_manager)
+        : trading_engine_(trading_engine), risk_manager_(risk_manager), logger_(logger) {}
 
     auto OnOrderUpdate(const exchange::MEClientResponse *client_response) noexcept -> void {
         logger_->Log("%:% %() % %\n", __FILE__, __LINE__, __FUNCTION__, common::GetCurrentTimeStr(&time_str_),
@@ -102,7 +102,7 @@ class OrderManager {
     auto operator=(const OrderManager &&) -> OrderManager & = delete;
 
    private:
-    TradingEngine *trade_engine_ = nullptr;
+    TradingEngine *trading_engine_ = nullptr;
     const trading::RiskManager &risk_manager_;
 
     std::string time_str_;
