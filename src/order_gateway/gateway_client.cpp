@@ -1,5 +1,7 @@
 #include "order_gateway/gateway_client.hpp"
 
+#include "common/perf_utils.hpp"
+
 namespace trading {
 
 GatewayClient::GatewayClient(common::ClientId client_id, exchange::ClientRequestLFQueue *client_requests,
@@ -26,12 +28,17 @@ void GatewayClient::Run() noexcept {
 
         for (auto client_request = outgoing_requests_->GetNextToRead(); client_request != nullptr;
              client_request = outgoing_requests_->GetNextToRead()) {
+            TTT_MEASURE(t11_order_gateway_lf_queue_read, logger_);
+
             logger_.Log("%:% %() % Sending cid:% seq:% %\n", __FILE__, __LINE__, __FUNCTION__,
                         common::GetCurrentTimeStr(&time_str_), CLIENT_ID, next_outgoing_seq_num_,
                         client_request->ToString());
+            START_MEASURE(trading_tcp_socket_send);
             tcp_socket_.Send(&next_outgoing_seq_num_, sizeof(next_outgoing_seq_num_));
             tcp_socket_.Send(client_request, sizeof(exchange::MEClientRequest));
+            END_MEASURE(trading_tcp_socket_send, logger_);
             outgoing_requests_->UpdateReadIndex();
+            TTT_MEASURE(t12_order_gateway_tcp_write, logger_);
 
             next_outgoing_seq_num_++;
         }
@@ -41,6 +48,9 @@ void GatewayClient::Run() noexcept {
 // Callback when an incoming client response is read, we perform some checks and forward it to the lock free queue
 // connected to the trade engine.
 void GatewayClient::RecvCallback(common::TCPSocket *socket, common::Nanos rx_time) noexcept {
+    TTT_MEASURE(t7t_order_gateway_tcp_read, logger_);
+
+    START_MEASURE(trading_order_gateway_recv_callback);
     logger_.Log("%:% %() % Received socket:% len:% %\n", __FILE__, __LINE__, __FUNCTION__,
                 common::GetCurrentTimeStr(&time_str_), socket->socket_fd_, socket->next_rcv_valid_index_, rx_time);
 
@@ -72,10 +82,12 @@ void GatewayClient::RecvCallback(common::TCPSocket *socket, common::Nanos rx_tim
             auto next_write = incoming_responses_->GetNextToWriteTo();
             *next_write = response->me_client_response_;
             incoming_responses_->UpdateWriteIndex();
+            TTT_MEASURE(t8t_order_gateway_lf_queue_write, logger_);
         }
         memcpy(socket->inbound_data_.data(), socket->inbound_data_.data() + i, socket->next_rcv_valid_index_ - i);
         socket->next_rcv_valid_index_ -= i;
     }
+    END_MEASURE(trading_order_gateway_recv_callback, logger_);
 }
 
 }  // namespace trading
