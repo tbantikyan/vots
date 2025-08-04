@@ -4,11 +4,9 @@
 
 #include "common/integrity.hpp"
 #include "feature_engine.hpp"
-#include "liquidity_taker.hpp"
 #include "logging/logger.hpp"
 #include "logging/time_utils.hpp"
 #include "market_data/market_update.hpp"
-#include "market_maker.hpp"
 #include "order_gateway/client_request.hpp"
 #include "order_gateway/client_response.hpp"
 #include "order_manager.hpp"

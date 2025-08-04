@@ -1,5 +1,8 @@
 #include "trading_engine/trading_engine.hpp"
 
+#include "trading_engine/liquidity_taker.hpp"
+#include "trading_engine/market_maker.hpp"
+
 namespace trading {
 
 TradingEngine::TradingEngine(common::ClientId client_id, common::AlgoType algo_type,
