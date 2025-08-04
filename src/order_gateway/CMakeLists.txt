@@ -1,6 +1,7 @@
 add_library(
         vots_order_gateway
         OBJECT
+        gateway_client.cpp
         order_server.cpp
     )
 
