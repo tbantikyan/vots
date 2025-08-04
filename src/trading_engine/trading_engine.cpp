@@ -64,7 +64,7 @@ TradingEngine::~TradingEngine() {
     incoming_md_updates_ = nullptr;
 }
 
-auto TradingEngine::SendClientRequest(const exchange::MEClientRequest *client_request) noexcept -> void {
+void TradingEngine::SendClientRequest(const exchange::MEClientRequest *client_request) noexcept {
     logger_.Log("%:% %() % Sending %\n", __FILE__, __LINE__, __FUNCTION__, common::GetCurrentTimeStr(&time_str_),
                 client_request->ToString().c_str());
     auto next_write = outgoing_ogw_requests_->GetNextToWriteTo();
@@ -72,7 +72,7 @@ auto TradingEngine::SendClientRequest(const exchange::MEClientRequest *client_re
     outgoing_ogw_requests_->UpdateWriteIndex();
 }
 
-auto TradingEngine::Run() noexcept -> void {
+void TradingEngine::Run() noexcept {
     logger_.Log("%:% %() %\n", __FILE__, __LINE__, __FUNCTION__, common::GetCurrentTimeStr(&time_str_));
     while (run_) {
         for (auto client_response = incoming_ogw_responses_->GetNextToRead(); client_response != nullptr;
@@ -97,8 +97,8 @@ auto TradingEngine::Run() noexcept -> void {
     }
 }
 
-auto TradingEngine::OnOrderBookUpdate(common::TickerId ticker_id, common::Price price, common::Side side,
-                                      TradingOrderBook *book) noexcept -> void {
+void TradingEngine::OnOrderBookUpdate(common::TickerId ticker_id, common::Price price, common::Side side,
+                                      TradingOrderBook *book) noexcept {
     logger_.Log("%:% %() % ticker:% price:% side:%\n", __FILE__, __LINE__, __FUNCTION__,
                 common::GetCurrentTimeStr(&time_str_), ticker_id, common::PriceToString(price).c_str(),
                 common::SideToString(side).c_str());
@@ -110,8 +110,7 @@ auto TradingEngine::OnOrderBookUpdate(common::TickerId ticker_id, common::Price 
     algo_on_order_book_update_(ticker_id, price, side, book);
 }
 
-auto TradingEngine::OnTradeUpdate(const exchange::MEMarketUpdate *market_update, TradingOrderBook *book) noexcept
-    -> void {
+void TradingEngine::OnTradeUpdate(const exchange::MEMarketUpdate *market_update, TradingOrderBook *book) noexcept {
     logger_.Log("%:% %() % %\n", __FILE__, __LINE__, __FUNCTION__, common::GetCurrentTimeStr(&time_str_),
                 market_update->ToString().c_str());
 
@@ -120,7 +119,7 @@ auto TradingEngine::OnTradeUpdate(const exchange::MEMarketUpdate *market_update,
     algo_on_trade_update_(market_update, book);
 }
 
-auto TradingEngine::OnOrderUpdate(const exchange::MEClientResponse *client_response) noexcept -> void {
+void TradingEngine::OnOrderUpdate(const exchange::MEClientResponse *client_response) noexcept {
     logger_.Log("%:% %() % %\n", __FILE__, __LINE__, __FUNCTION__, common::GetCurrentTimeStr(&time_str_),
                 client_response->ToString().c_str());
 

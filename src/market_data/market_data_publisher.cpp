@@ -7,7 +7,7 @@ MarketDataPublisher::MarketDataPublisher(MEMarketUpdateLFQueue *market_updates, 
                                          const std::string &incremental_ip, int incremental_port)
     : outgoing_md_updates_(market_updates),
       snapshot_md_updates_(common::ME_MAX_MARKET_UPDATES),
-      run_(false), // NOLINT
+      run_(false),  // NOLINT
       logger_("exchange_market_data_publisher.log"),
       incremental_socket_(logger_) {
     ASSERT(incremental_socket_.Init(incremental_ip, iface, incremental_port, /*is_listening*/ false) >= 0,
@@ -15,7 +15,7 @@ MarketDataPublisher::MarketDataPublisher(MEMarketUpdateLFQueue *market_updates, 
     snapshot_synthesizer_ = new SnapshotSynthesizer(&snapshot_md_updates_, iface, snapshot_ip, snapshot_port);
 }
 
-auto MarketDataPublisher::Run() noexcept -> void {
+void MarketDataPublisher::Run() noexcept {
     logger_.Log("%:% %() %\n", __FILE__, __LINE__, __FUNCTION__, common::GetCurrentTimeStr(&time_str_));
     while (run_) {
         for (auto market_update = outgoing_md_updates_->GetNextToRead();

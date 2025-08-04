@@ -23,11 +23,11 @@ class TradingOrderBook final {
 
     ~TradingOrderBook();
 
-    auto OnMarketUpdate(const exchange::MEMarketUpdate *market_update) noexcept -> void;
+    void OnMarketUpdate(const exchange::MEMarketUpdate *market_update) noexcept;
 
-    auto SetTradingEngine(TradingEngine *trade_engine) { trade_engine_ = trade_engine; }
+    void SetTradingEngine(TradingEngine *trade_engine) { trade_engine_ = trade_engine; }
 
-    auto UpdateBbo(bool update_bid, bool update_ask) noexcept {
+    void UpdateBbo(bool update_bid, bool update_ask) noexcept {
         if (update_bid) {
             if (bids_by_price_ != nullptr) {
                 bbo_.bid_price_ = bids_by_price_->price_;
@@ -99,7 +99,7 @@ class TradingOrderBook final {
         return price_orders_at_price_.at(PriceToIndex(price));
     }
 
-    auto AddOrdersAtPrice(TradingOrdersAtPrice *new_orders_at_price) noexcept {
+    void AddOrdersAtPrice(TradingOrdersAtPrice *new_orders_at_price) noexcept {
         price_orders_at_price_.at(PriceToIndex(new_orders_at_price->price_)) = new_orders_at_price;
 
         const auto best_orders_by_price =
@@ -156,7 +156,7 @@ class TradingOrderBook final {
         }
     }
 
-    auto RemoveOrdersAtPrice(common::Side side, common::Price price) noexcept {
+    void RemoveOrdersAtPrice(common::Side side, common::Price price) noexcept {
         const auto best_orders_by_price = (side == common::Side::BUY ? bids_by_price_ : asks_by_price_);
         auto orders_at_price = GetOrdersAtPrice(price);
 
@@ -178,7 +178,7 @@ class TradingOrderBook final {
         orders_at_price_pool_.Deallocate(orders_at_price);
     }
 
-    auto RemoveOrder(TradingOrder *order) noexcept -> void {
+    void RemoveOrder(TradingOrder *order) noexcept {
         auto orders_at_price = GetOrdersAtPrice(order->price_);
 
         if (order->prev_order_ == order) {  // only one element.
@@ -200,7 +200,7 @@ class TradingOrderBook final {
         order_pool_.Deallocate(order);
     }
 
-    auto AddOrder(TradingOrder *order) noexcept -> void {
+    void AddOrder(TradingOrder *order) noexcept {
         const auto orders_at_price = GetOrdersAtPrice(order->price_);
 
         if (orders_at_price == nullptr) {

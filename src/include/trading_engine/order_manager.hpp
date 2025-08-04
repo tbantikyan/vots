@@ -20,7 +20,7 @@ class OrderManager {
     OrderManager(common::Logger *logger, TradingEngine *trading_engine, trading::RiskManager &risk_manager)
         : trading_engine_(trading_engine), risk_manager_(risk_manager), logger_(logger) {}
 
-    auto OnOrderUpdate(const exchange::MEClientResponse *client_response) noexcept -> void {
+    void OnOrderUpdate(const exchange::MEClientResponse *client_response) noexcept {
         logger_->Log("%:% %() % %\n", __FILE__, __LINE__, __FUNCTION__, common::GetCurrentTimeStr(&time_str_),
                      client_response->ToString().c_str());
         auto order = &(ticker_side_order_.at(client_response->ticker_id_).at(SideToIndex(client_response->side_)));
@@ -46,12 +46,12 @@ class OrderManager {
         }
     }
 
-    auto NewOrder(trading::OMOrder *order, common::TickerId ticker_id, common::Price price, common::Side side,
-                  common::Qty qty) noexcept -> void;
+    void NewOrder(trading::OMOrder *order, common::TickerId ticker_id, common::Price price, common::Side side,
+                  common::Qty qty) noexcept;
 
-    auto CancelOrder(trading::OMOrder *order) noexcept -> void;
+    void CancelOrder(trading::OMOrder *order) noexcept;
 
-    auto MoveOrder(trading::OMOrder *order, common::TickerId ticker_id, common::Price price, common::Side side,
+    void MoveOrder(trading::OMOrder *order, common::TickerId ticker_id, common::Price price, common::Side side,
                    common::Qty qty) noexcept {
         switch (order->order_state_) {
             case OMOrderState::LIVE: {

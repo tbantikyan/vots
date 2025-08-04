@@ -28,7 +28,7 @@ MarketDataConsumer::MarketDataConsumer(common::ClientId client_id, exchange::MEM
 
 // Main loop for this thread - reads and processes messages from the multicast sockets - the heavy lifting is in the
 // recvCallback() and checkSnapshotSync() methods.
-auto MarketDataConsumer::Run() noexcept -> void {
+void MarketDataConsumer::Run() noexcept {
     logger_.Log("%:% %() %\n", __FILE__, __LINE__, __FUNCTION__, common::GetCurrentTimeStr(&time_str_));
     while (run_) {
         incremental_mcast_socket_.SendAndRecv();
@@ -37,7 +37,7 @@ auto MarketDataConsumer::Run() noexcept -> void {
 }
 
 // Start the process of snapshot synchronization by subscribing to the snapshot multicast stream.
-auto MarketDataConsumer::StartSnapshotSync() -> void {
+void MarketDataConsumer::StartSnapshotSync() {
     snapshot_queued_msgs_.clear();
     incremental_queued_msgs_.clear();
 
@@ -50,7 +50,7 @@ auto MarketDataConsumer::StartSnapshotSync() -> void {
 
 // Check if a recovery / synchronization is possible from the queued up market data updates from the snapshot and
 // incremental market data streams.
-auto MarketDataConsumer::CheckSnapshotSync() -> void {
+void MarketDataConsumer::CheckSnapshotSync() {
     if (snapshot_queued_msgs_.empty()) {
         return;
     }
@@ -179,7 +179,7 @@ auto MarketDataConsumer::QueueMessage(bool is_snapshot, const exchange::MDPMarke
 
 // Process a market data update, the consumer needs to use the socket parameter to figure out whether this came from the
 // snapshot or the incremental stream.
-auto MarketDataConsumer::RecvCallback(common::McastSocket *socket) noexcept -> void {
+void MarketDataConsumer::RecvCallback(common::McastSocket *socket) noexcept {
     const auto is_snapshot = (socket->socket_fd_ == snapshot_mcast_socket_.socket_fd_);
     if (is_snapshot && !in_recovery_) [[unlikely]] {  // market update was read from the snapshot market data stream and
                                                       // we are not in recovery, so we dont need it and discard it.
