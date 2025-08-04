@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "common/perf_utils.hpp"
 #include "logging/logger.hpp"
 #include "om_order.hpp"
 #include "order_gateway/client_response.hpp"
@@ -56,15 +57,21 @@ class OrderManager {
         switch (order->order_state_) {
             case OMOrderState::LIVE: {
                 if (order->price_ != price) {
+                    START_MEASURE(trading_order_manager_cancel_order);
                     CancelOrder(order);
+                    END_MEASURE(trading_order_manager_cancel_order, (*logger_));
                 }
             } break;
             case OMOrderState::INVALID:
             case OMOrderState::DEAD: {
                 if (price != common::PRICE_INVALID) [[likely]] {
+                    START_MEASURE(trading_risk_manager_check_pre_trade_risk);
                     const auto risk_result = risk_manager_.CheckPreTradeRisk(ticker_id, side, qty);
+                    END_MEASURE(trading_risk_manager_check_pre_trade_risk, (*logger_));
                     if (risk_result == RiskCheckResult::ALLOWED) [[likely]] {
+                        START_MEASURE(trading_order_manager_new_order);
                         NewOrder(order, ticker_id, price, side, qty);
+                        END_MEASURE(trading_order_manager_new_order, (*logger_));
                     } else {
                         logger_->Log("%:% %() % Ticker:% Side:% Qty:% RiskCheckResult:%\n", __FILE__, __LINE__,
                                      __FUNCTION__, common::GetCurrentTimeStr(&time_str_),
@@ -81,11 +88,19 @@ class OrderManager {
 
     auto MoveOrders(common::TickerId ticker_id, common::Price bid_price, common::Price ask_price,
                     common::Qty clip) noexcept {
-        auto bid_order = &(ticker_side_order_.at(ticker_id).at(common::SideToIndex(common::Side::BUY)));
-        MoveOrder(bid_order, ticker_id, bid_price, common::Side::BUY, clip);
+        {
+            auto bid_order = &(ticker_side_order_.at(ticker_id).at(common::SideToIndex(common::Side::BUY)));
+            START_MEASURE(trading_order_manager_move_order);
+            MoveOrder(bid_order, ticker_id, bid_price, common::Side::BUY, clip);
+            END_MEASURE(trading_order_manager_move_order, (*logger_));
+        }
 
-        auto ask_order = &(ticker_side_order_.at(ticker_id).at(common::SideToIndex(common::Side::SELL)));
-        MoveOrder(ask_order, ticker_id, ask_price, common::Side::SELL, clip);
+        {
+            auto ask_order = &(ticker_side_order_.at(ticker_id).at(common::SideToIndex(common::Side::SELL)));
+            START_MEASURE(trading_order_manager_move_order);
+            MoveOrder(ask_order, ticker_id, ask_price, common::Side::SELL, clip);
+            END_MEASURE(trading_order_manager_move_order, (*logger_));
+        }
     }
 
     auto GetOmOrderSideHashMap(common::TickerId ticker_id) const { return &(ticker_side_order_.at(ticker_id)); }
