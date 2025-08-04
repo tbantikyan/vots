@@ -31,6 +31,6 @@ inline auto CycleCount() noexcept {
 // Log a current timestamp at the time this macro is invoked.
 #define TTT_MEASURE(TAG, LOGGER)                                                        \
     do {                                                                                \
-        const auto(TAG) = common::GetCurrentNanos();                                    \
+        const auto TAG = common::GetCurrentNanos();                                     \
         (LOGGER).Log("% TTT " #TAG " %\n", common::GetCurrentTimeStr(&time_str_), TAG); \
     } while (false)
