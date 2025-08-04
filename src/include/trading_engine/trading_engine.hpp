@@ -29,13 +29,13 @@ class TradingEngine {
 
     ~TradingEngine();
 
-    auto Start() -> void {
+    void Start() {
         run_ = true;
         ASSERT(common::CreateAndStartThread(-1, "Trading/TradeEngine", [this] { Run(); }) != nullptr,
                "Failed to start TradeEngine thread.");
     }
 
-    auto Stop() -> void {
+    void Stop() {
         while ((incoming_ogw_responses_->Size() != 0) || (incoming_md_updates_->Size() != 0)) {
             logger_.Log("%:% %() % Sleeping till all updates are consumed ogw-size:% md-size:%\n", __FILE__, __LINE__,
                         __FUNCTION__, common::GetCurrentTimeStr(&time_str_), incoming_ogw_responses_->Size(),
@@ -106,20 +106,20 @@ class TradingEngine {
     MarketMaker *mm_algo_ = nullptr;
     LiquidityTaker *taker_algo_ = nullptr;
 
-    auto DefaultAlgoOnOrderBookUpdate(common::TickerId ticker_id, common::Price price, common::Side side,
-                                      TradingOrderBook * /*unused*/) noexcept -> void {
+    void DefaultAlgoOnOrderBookUpdate(common::TickerId ticker_id, common::Price price, common::Side side,
+                                      TradingOrderBook * /*unused*/) noexcept {
         logger_.Log("%:% %() % ticker:% price:% side:%\n", __FILE__, __LINE__, __FUNCTION__,
                     common::GetCurrentTimeStr(&time_str_), ticker_id, common::PriceToString(price).c_str(),
                     common::SideToString(side).c_str());
     }
 
-    auto DefaultAlgoOnTradeUpdate(const exchange::MEMarketUpdate *market_update, TradingOrderBook * /*unused*/) noexcept
-        -> void {
+    void DefaultAlgoOnTradeUpdate(const exchange::MEMarketUpdate *market_update,
+                                  TradingOrderBook * /*unused*/) noexcept {
         logger_.Log("%:% %() % %\n", __FILE__, __LINE__, __FUNCTION__, common::GetCurrentTimeStr(&time_str_),
                     market_update->ToString().c_str());
     }
 
-    auto DefaultAlgoOnOrderUpdate(const exchange::MEClientResponse *client_response) noexcept -> void {
+    void DefaultAlgoOnOrderUpdate(const exchange::MEClientResponse *client_response) noexcept {
         logger_.Log("%:% %() % %\n", __FILE__, __LINE__, __FUNCTION__, common::GetCurrentTimeStr(&time_str_),
                     client_response->ToString().c_str());
     }

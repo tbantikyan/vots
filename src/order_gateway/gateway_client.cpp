@@ -40,7 +40,7 @@ void GatewayClient::Run() noexcept {
 
 // Callback when an incoming client response is read, we perform some checks and forward it to the lock free queue
 // connected to the trade engine.
-auto GatewayClient::RecvCallback(common::TCPSocket *socket, common::Nanos rx_time) noexcept -> void {
+void GatewayClient::RecvCallback(common::TCPSocket *socket, common::Nanos rx_time) noexcept {
     logger_.Log("%:% %() % Received socket:% len:% %\n", __FILE__, __LINE__, __FUNCTION__,
                 common::GetCurrentTimeStr(&time_str_), socket->socket_fd_, socket->next_rcv_valid_index_, rx_time);
 

@@ -27,8 +27,8 @@ class MarketMaker {
         trading_engine->algo_on_order_update_ = [this](auto client_response) { OnOrderUpdate(client_response); };
     }
 
-    auto OnOrderBookUpdate(common::TickerId ticker_id, common::Price price, common::Side side,
-                           const TradingOrderBook *book) noexcept -> void {
+    void OnOrderBookUpdate(common::TickerId ticker_id, common::Price price, common::Side side,
+                           const TradingOrderBook *book) noexcept {
         logger_->Log("%:% %() % ticker:% price:% side:%\n", __FILE__, __LINE__, __FUNCTION__,
                      common::GetCurrentTimeStr(&time_str_), ticker_id, common::PriceToString(price).c_str(),
                      common::SideToString(side).c_str());
@@ -51,13 +51,12 @@ class MarketMaker {
         }
     }
 
-    auto OnTradeUpdate(const exchange::MEMarketUpdate *market_update, TradingOrderBook * /* unused */) noexcept
-        -> void {
+    void OnTradeUpdate(const exchange::MEMarketUpdate *market_update, TradingOrderBook * /* unused */) noexcept {
         logger_->Log("%:% %() % %\n", __FILE__, __LINE__, __FUNCTION__, common::GetCurrentTimeStr(&time_str_),
                      market_update->ToString().c_str());
     }
 
-    auto OnOrderUpdate(const exchange::MEClientResponse *client_response) noexcept -> void {
+    void OnOrderUpdate(const exchange::MEClientResponse *client_response) noexcept {
         logger_->Log("%:% %() % %\n", __FILE__, __LINE__, __FUNCTION__, common::GetCurrentTimeStr(&time_str_),
                      client_response->ToString().c_str());
         order_manager_->OnOrderUpdate(client_response);

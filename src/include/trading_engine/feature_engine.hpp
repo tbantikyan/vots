@@ -17,8 +17,8 @@ class FeatureEngine {
    public:
     explicit FeatureEngine(common::Logger *logger) : logger_(logger) {}
 
-    auto OnOrderBookUpdate(common::TickerId ticker_id, common::Price price, common::Side side,
-                           TradingOrderBook *book) noexcept -> void {
+    void OnOrderBookUpdate(common::TickerId ticker_id, common::Price price, common::Side side,
+                           TradingOrderBook *book) noexcept {
         const auto bbo = book->GetBbo();
         if (bbo->bid_price_ != common::PRICE_INVALID && bbo->ask_price_ != common::PRICE_INVALID) [[likely]] {
             mkt_price_ = (bbo->bid_price_ * bbo->ask_qty_ + bbo->ask_price_ * bbo->bid_qty_) /
@@ -31,7 +31,7 @@ class FeatureEngine {
                      agg_trade_qty_ratio_);
     }
 
-    auto OnTradeUpdate(const exchange::MEMarketUpdate *market_update, TradingOrderBook *book) noexcept -> void {
+    void OnTradeUpdate(const exchange::MEMarketUpdate *market_update, TradingOrderBook *book) noexcept {
         const auto bbo = book->GetBbo();
         if (bbo->bid_price_ != common::PRICE_INVALID && bbo->ask_price_ != common::PRICE_INVALID) [[likely]] {
             agg_trade_qty_ratio_ = static_cast<double>(market_update->qty_) /
