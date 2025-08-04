@@ -10,7 +10,7 @@
 namespace common {
 
 // Read from the TSC register and return a uint64_t value to represent elapsed CPU clock cycles.
-inline auto CycleCount() noexcept {  
+inline auto CycleCount() noexcept {
     uint64_t cnt;
     asm volatile("mrs %0, CNTVCT_EL0" : "=r"(cnt));
     return cnt;
@@ -22,9 +22,9 @@ inline auto CycleCount() noexcept {
 
 // End latency measurement using CycleCount(). Expects a variable called TAG to already exist in the local scope.
 // Do while forces user to add ; at the end of macro use.
-#define END_MEASURE(TAG, LOGGER)                                                                    \
-    do {                                                                                            \
-        const auto end = common::CycleCount();                                                           \
+#define END_MEASURE(TAG, LOGGER)                                                                          \
+    do {                                                                                                  \
+        const auto end = common::CycleCount();                                                            \
         (LOGGER).Log("% Cycle Count " #TAG " %\n", common::GetCurrentTimeStr(&time_str_), (end - (TAG))); \
     } while (false)
 
