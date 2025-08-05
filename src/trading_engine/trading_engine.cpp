@@ -71,7 +71,7 @@ void TradingEngine::SendClientRequest(const exchange::MEClientRequest *client_re
     auto next_write = outgoing_ogw_requests_->GetNextToWriteTo();
     *next_write = *client_request;
     outgoing_ogw_requests_->UpdateWriteIndex();
-    TTT_MEASURE(t10_trade_engine_lf_queue_write, logger_);
+    TTT_MEASURE(t10_trading_engine_lf_queue_write, logger_);
 }
 
 void TradingEngine::Run() noexcept {
@@ -79,7 +79,7 @@ void TradingEngine::Run() noexcept {
     while (run_) {
         for (auto client_response = incoming_ogw_responses_->GetNextToRead(); client_response != nullptr;
              client_response = incoming_ogw_responses_->GetNextToRead()) {
-            TTT_MEASURE(t9t_trade_engine_lf_queue_read, logger_);
+            TTT_MEASURE(t9t_trading_engine_lf_queue_read, logger_);
 
             logger_.Log("%:% %() % Processing %\n", __FILE__, __LINE__, __FUNCTION__,
                         common::GetCurrentTimeStr(&time_str_), client_response->ToString().c_str());
@@ -90,7 +90,7 @@ void TradingEngine::Run() noexcept {
 
         for (auto market_update = incoming_md_updates_->GetNextToRead(); market_update != nullptr;
              market_update = incoming_md_updates_->GetNextToRead()) {
-            TTT_MEASURE(t9_trade_engine_lf_queue_read, logger_);
+            TTT_MEASURE(t9_trading_engine_lf_queue_read, logger_);
 
             logger_.Log("%:% %() % Processing %\n", __FILE__, __LINE__, __FUNCTION__,
                         common::GetCurrentTimeStr(&time_str_), market_update->ToString().c_str());
@@ -117,9 +117,9 @@ void TradingEngine::OnOrderBookUpdate(common::TickerId ticker_id, common::Price 
     feature_engine_.OnOrderBookUpdate(ticker_id, price, side, book);
     END_MEASURE(trading_feature_engine_on_order_book_update, logger_);
 
-    START_MEASURE(trading_trade_engine_algo_on_order_book_update);
+    START_MEASURE(trading_trading_engine_algo_on_order_book_update);
     algo_on_order_book_update_(ticker_id, price, side, book);
-    END_MEASURE(trading_trade_engine_algo_on_order_book_update, logger_);
+    END_MEASURE(trading_trading_engine_algo_on_order_book_update, logger_);
 }
 
 void TradingEngine::OnTradeUpdate(const exchange::MEMarketUpdate *market_update, TradingOrderBook *book) noexcept {
@@ -130,9 +130,9 @@ void TradingEngine::OnTradeUpdate(const exchange::MEMarketUpdate *market_update,
     feature_engine_.OnTradeUpdate(market_update, book);
     END_MEASURE(trading_feature_engine_on_trade_update, logger_);
 
-    START_MEASURE(trading_trade_engine_algo_on_trade_update);
+    START_MEASURE(trading_trading_engine_algo_on_trade_update);
     algo_on_trade_update_(market_update, book);
-    END_MEASURE(trading_trade_engine_algo_on_trade_update, logger_);
+    END_MEASURE(trading_trading_engine_algo_on_trade_update, logger_);
 }
 
 void TradingEngine::OnOrderUpdate(const exchange::MEClientResponse *client_response) noexcept {
@@ -145,9 +145,9 @@ void TradingEngine::OnOrderUpdate(const exchange::MEClientResponse *client_respo
         END_MEASURE(trading_position_keeper_add_fill, logger_);
     }
 
-    START_MEASURE(trading_trade_engine_algo_on_order_update);
+    START_MEASURE(trading_trading_engine_algo_on_order_update);
     algo_on_order_update_(client_response);
-    END_MEASURE(trading_trade_engine_algo_on_order_update, logger_);
+    END_MEASURE(trading_trading_engine_algo_on_order_update, logger_);
 }
 
 }  // namespace trading
