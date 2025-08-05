@@ -6,12 +6,13 @@
 #pragma once
 
 #include <cstdio>
+#include <cstring>
 #include <fstream>
 #include <string>
 
 #include "common/integrity.hpp"
-#include "log_type.hpp"
 #include "common/time_utils.hpp"
+#include "log_type.hpp"
 #include "runtime/lock_free_queue.hpp"
 #include "runtime/threads.hpp"
 
@@ -39,6 +40,7 @@ class Logger final {
             unsigned long long ull_;
             float f_;
             double d_;
+            char s_[256];
         } u_;
     };
 
@@ -73,6 +75,9 @@ class Logger final {
                         break;
                     case LogType::DOUBLE:
                         file_ << next->u_.d_;
+                        break;
+                    case LogType::STRING:
+                        file_ << next->u_.s_;
                         break;
                 }
                 queue_.UpdateReadIndex();
@@ -140,10 +145,9 @@ class Logger final {
     auto PushValue(const double value) noexcept { PushValue(Element{.type_ = LogType::DOUBLE, .u_ = {.d_ = value}}); }
 
     auto PushValue(const char *value) noexcept {
-        while (*value != 0U) {
-            PushValue(*value);
-            ++value;
-        }
+        Element l{.type_=LogType::STRING, .u_={.s_ = {}}};
+        strncpy(l.u_.s_, value, sizeof(l.u_.s_) - 1);
+        PushValue(l);
     }
 
     auto PushValue(const std::string &value) noexcept { PushValue(value.c_str()); }
