@@ -9,7 +9,7 @@
 
 namespace common {
 
-enum class LogType : uint8_t {
+enum class LogType : int8_t {
     CHAR = 0,
     INTEGER = 1,
     LONG_INTEGER = 2,
@@ -18,7 +18,8 @@ enum class LogType : uint8_t {
     UNSIGNED_LONG_INTEGER = 5,
     UNSIGNED_LONG_LONG_INTEGER = 6,
     FLOAT = 7,
-    DOUBLE = 8
+    DOUBLE = 8,
+    STRING = 9
 };
 
 }  // namespace common
