@@ -43,3 +43,8 @@ To run the entire system, a bash script is provided with the sample input of fiv
 ```
 cd scripts && ./run_system.sh
 ```
+
+Tear down:
+```
+docker-compose down
+```
