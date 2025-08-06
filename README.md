@@ -26,3 +26,25 @@ developed in C++ and optimized for low latency operation.
     * Liquidity Taker & Market Maker trading strategies
 * Order Gateway Client
 * Market Data Consumer
+
+## Running:
+Vots was developed on ubuntu 22.04 for ARM architecture. To run and test it out on other machines, use the following to start a Docker container with the program files:
+```
+docker-compose build
+```
+```
+docker-compose up -d
+```
+```
+docker-compose exec dev bash
+```
+
+To run the entire system, a bash script is provided with the sample input of five clients. Note that this may be too many for most computers, and you can comment out clients as needed:
+```
+cd scripts && ./run_system.sh
+```
+
+Tear down:
+```
+docker-compose down
+```
